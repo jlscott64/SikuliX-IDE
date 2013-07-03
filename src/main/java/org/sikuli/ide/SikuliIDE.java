@@ -105,7 +105,7 @@ public class SikuliIDE extends JFrame {
     try {
       return SikuliIDEI18N._I(key, args);
     } catch (Exception e) {
-      System.out.println("[I18N] " + key);
+      Debug.log(1, "[I18N] " + key);
       return key;
     }
   }

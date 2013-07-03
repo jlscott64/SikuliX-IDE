@@ -6,9 +6,8 @@
  */
 package org.sikuli.ide;
 
-import java.util.*;
 import java.text.MessageFormat;
-
+import java.util.*;
 import org.sikuli.script.Debug;
 
 public class SikuliIDEI18N {
