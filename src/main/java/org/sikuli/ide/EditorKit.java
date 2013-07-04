@@ -6,6 +6,7 @@
  */
 package org.sikuli.ide;
 
+import org.sikuli.setup.PreferencesUser;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -14,7 +15,7 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
 import org.sikuli.ide.indentation.PythonIndentation;
-import org.sikuli.script.Debug;
+import org.sikuli.setup.Debug;
 
 public class EditorKit extends StyledEditorKit {
 

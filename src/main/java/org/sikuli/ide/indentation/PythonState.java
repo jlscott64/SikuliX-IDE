@@ -11,7 +11,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sikuli.script.Debug;
+import org.sikuli.setup.Debug;
 
 /**
  * This class is used to determine the state at any given position in a python

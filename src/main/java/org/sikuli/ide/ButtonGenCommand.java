@@ -6,12 +6,13 @@
  */
 package org.sikuli.ide;
 
+import org.sikuli.setup.PreferencesUser;
 import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.text.*;
 import java.net.URL;
 
-import org.sikuli.script.Debug;
+import org.sikuli.setup.Debug;
 
 public class ButtonGenCommand extends JButton implements ActionListener,
         MouseListener {

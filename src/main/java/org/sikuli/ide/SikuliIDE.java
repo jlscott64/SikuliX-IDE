@@ -8,6 +8,7 @@ package org.sikuli.ide;
 
 //TODO
 // dirty pane handling: on individual tab
+import org.sikuli.setup.PreferencesUser;
 import com.explodingpixels.macwidgets.MacUtils;
 import java.awt.*;
 import java.awt.event.*;
@@ -16,8 +17,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -31,20 +30,20 @@ import org.sikuli.ide.EditorKit;
 import org.sikuli.ide.extmanager.ExtensionManagerFrame;
 import org.sikuli.ide.util.Utils;
 import org.sikuli.script.CommandArgs;
-import org.sikuli.script.Debug;
+import org.sikuli.setup.Debug;
 import org.sikuli.script.EventObserver;
 import org.sikuli.script.EventSubject;
-import org.sikuli.script.FileManager;
+import org.sikuli.setup.FileManager;
 import org.sikuli.script.HotkeyEvent;
 import org.sikuli.script.HotkeyListener;
 import org.sikuli.script.HotkeyManager;
-import org.sikuli.script.IScriptRunner;
+import org.sikuli.setup.IScriptRunner;
 import org.sikuli.script.Location;
 import org.sikuli.script.OverlayCapturePrompt;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenHighlighter;
 import org.sikuli.script.ScreenImage;
-import org.sikuli.script.Settings;
+import org.sikuli.setup.Settings;
 import org.sikuli.script.SikuliScript;
 import org.sikuli.utility.AutoUpdater;
 
@@ -1737,7 +1736,7 @@ public class SikuliIDE extends JFrame {
     protected void runPython(File f) throws Exception {
       File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
       File parent = path.getParentFile();
-      IScriptRunner srunner = SikuliScript.getScriptRunner("jython", null, Settings.getArgs());
+      IScriptRunner srunner = Settings.getScriptRunner("jython", null, Settings.getArgs());
       if (srunner == null) {
         Debug.error("Could not load the Jython script runner");
         return;

@@ -6,12 +6,13 @@
  */
 package org.sikuli.ide;
 
+import org.sikuli.setup.PreferencesUser;
 import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import org.sikuli.script.Settings;
+import org.sikuli.setup.Settings;
 
 
 public class SikuliIDEFileChooser {

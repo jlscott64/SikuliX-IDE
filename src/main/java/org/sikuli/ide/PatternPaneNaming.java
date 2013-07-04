@@ -6,6 +6,7 @@
  */
 package org.sikuli.ide;
 
+import org.sikuli.setup.PreferencesUser;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;

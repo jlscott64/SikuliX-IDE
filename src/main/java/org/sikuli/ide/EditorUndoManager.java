@@ -22,7 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import org.sikuli.script.Debug;
+import org.sikuli.setup.Debug;
 
 class MyCompoundEdit extends CompoundEdit {
    boolean isUnDone=false;
