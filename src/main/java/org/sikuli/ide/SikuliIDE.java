@@ -8,7 +8,6 @@ package org.sikuli.ide;
 
 //TODO
 // dirty pane handling: on individual tab
-import org.sikuli.setup.PreferencesUser;
 import com.explodingpixels.macwidgets.MacUtils;
 import java.awt.*;
 import java.awt.event.*;
@@ -30,21 +29,22 @@ import org.sikuli.ide.EditorKit;
 import org.sikuli.ide.extmanager.ExtensionManagerFrame;
 import org.sikuli.ide.util.Utils;
 import org.sikuli.script.CommandArgs;
-import org.sikuli.setup.Debug;
 import org.sikuli.script.EventObserver;
 import org.sikuli.script.EventSubject;
-import org.sikuli.setup.FileManager;
 import org.sikuli.script.HotkeyEvent;
 import org.sikuli.script.HotkeyListener;
 import org.sikuli.script.HotkeyManager;
-import org.sikuli.setup.IScriptRunner;
 import org.sikuli.script.Location;
 import org.sikuli.script.OverlayCapturePrompt;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenHighlighter;
 import org.sikuli.script.ScreenImage;
-import org.sikuli.setup.Settings;
 import org.sikuli.script.SikuliScript;
+import org.sikuli.setup.Debug;
+import org.sikuli.setup.FileManager;
+import org.sikuli.setup.IScriptRunner;
+import org.sikuli.setup.PreferencesUser;
+import org.sikuli.setup.Settings;
 import org.sikuli.utility.AutoUpdater;
 
 public class SikuliIDE extends JFrame {
@@ -735,6 +735,7 @@ public class SikuliIDE extends JFrame {
           return;
         }
       }
+      HotkeyManager.getInstance().cleanUp();
       System.exit(0);
     }
 
@@ -1808,7 +1809,7 @@ public class SikuliIDE extends JFrame {
     @Override
     protected void addPythonCode(IScriptRunner srunner) {
       srunner.execBefore(null);
-      srunner.execBefore(new String[]{"setShowActions=True"});
+      srunner.execBefore(new String[]{"setShowActions(True)"});
     }
   }
 
@@ -2126,7 +2127,7 @@ public class SikuliIDE extends JFrame {
   }
 
   public void installCaptureHotkey(int key, int mod) {
-    HotkeyManager.getInstance()._addHotkey(key, mod, new HotkeyListener() {
+    HotkeyManager.getInstance().addHotkey(1, new HotkeyListener() {
       @Override
       public void hotkeyPressed(HotkeyEvent e) {
         if (!SikuliIDE.getInstance().isRunningScript()) {

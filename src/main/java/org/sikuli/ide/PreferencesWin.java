@@ -642,7 +642,7 @@ public class PreferencesWin extends JFrame {
   private void txtHotkeyKeyPressed(KeyEvent e) {
     int code = e.getKeyCode();
     int mod = e.getModifiers();
-    Debug.log(7, "" + code + " " + mod);
+    Debug.log(2, "HotKey: " + code + " " + mod);
     setTxtHotkey(code, mod);
     _txtHotkey.setEditable(false);
   }

@@ -6,6 +6,7 @@
  */
 package org.sikuli.ide.util;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.*;
 import java.io.*;
@@ -152,11 +153,9 @@ public class Utils {
 		String txtMod = KeyEvent.getKeyModifiersText(mod);
 		String txtCode = KeyEvent.getKeyText(code);
 		String ret;
-		if (txtCode.equals("Ctrl") || txtCode.equals("Alt")
-						|| txtCode.equals("Windows") || txtCode.equals("Shift")
-						|| txtCode.equals("\u2303") || txtCode.equals("\u2325")
-						|| txtCode.equals("\u2318") || txtCode.equals("\u21E7")) {
-			ret = txtMod;
+		if (code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL ||
+            code == KeyEvent.VK_SHIFT) {
+      ret = txtMod;
 		} else {
 			ret = txtMod + " " + txtCode;
 		}
