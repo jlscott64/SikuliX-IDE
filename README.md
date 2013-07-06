@@ -50,5 +50,5 @@ including a current version of [Sikuli API](https://github.com/RaiMan/SikuliX-AP
  - you might always post an issue with any content in this repo of course
 
 **Contribution**
- - pull requests are always welcome (beginning mid June 2013)
+ - pull requests are always welcome
  - everyone is welcome to add interesting stuff, experiences, solutions to the wiki in this repo
