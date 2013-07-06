@@ -1,4 +1,4 @@
-Sikuli IDE 1.0.1 -- Branch development
+Sikuli IDE 1.0.1<br /> Service Update end July 2013
 ===========
 
 **Download of current versions (1.0.0)** visit the official [**download page on Launchpad**](https://launchpad.net/sikuli/+download).<br />
@@ -21,7 +21,7 @@ The downloadable packages of Sikuli IDE contain everything needed <br />
 including a current version of [Sikuli API](https://github.com/RaiMan/SikuliX-API).
 
 **Roadmap**
- - **2013 June 10:** open a developement branch for Sikuli IDE 1.1
+ - **2013 July 6:** open a developement branch for Sikuli IDE 1.1
   - better support for images and usage of Sikuli features
   - implement more standard IDE features
   - support JRuby as scripting language
@@ -32,7 +32,6 @@ including a current version of [Sikuli API](https://github.com/RaiMan/SikuliX-AP
 <br />
 <br />
  - **2013 October 31:** release of Sikuli IDE 1.1
-  - merge branch develop into branch master
   - open a developement branch for Sikuli IDE 1.2
   - more scripting languages
   - new features tbd.
