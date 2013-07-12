@@ -11,7 +11,7 @@ import javax.swing.JTextPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.*;
-import org.sikuli.setup.Debug;
+import org.sikuli.basics.Debug;
 
 public class EditorCurrentLineHighlighter implements CaretListener {
 

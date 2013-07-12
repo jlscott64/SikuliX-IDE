@@ -6,7 +6,7 @@
  */
 package org.sikuli.ide;
 
-import org.sikuli.setup.PreferencesUser;
+import org.sikuli.basics.PreferencesUser;
 import javax.swing.JCheckBox;
 
 /**

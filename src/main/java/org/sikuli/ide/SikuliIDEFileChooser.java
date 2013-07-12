@@ -6,13 +6,13 @@
  */
 package org.sikuli.ide;
 
-import org.sikuli.setup.PreferencesUser;
+import org.sikuli.basics.PreferencesUser;
 import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import org.sikuli.setup.Settings;
+import org.sikuli.basics.Settings;
 
 
 public class SikuliIDEFileChooser {
@@ -28,7 +28,7 @@ public class SikuliIDEFileChooser {
 	}
 
 	private File showFileChooser(String msg, int mode, GeneralFileFilter[] filters, int selectionMode) {
-		if (Settings.isMac()) {
+		if (Settings.isMac() && Settings.hasMacBundles) {
 			if (Settings.isJava7() && selectionMode == DIRS) {
 				return showJFileChooser(msg, mode, filters, FILES);
 			} else {

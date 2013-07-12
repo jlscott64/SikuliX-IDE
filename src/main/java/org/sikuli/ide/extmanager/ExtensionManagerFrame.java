@@ -27,8 +27,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.json.simple.JSONValue;
-import org.sikuli.setup.Debug;
-import org.sikuli.setup.Settings;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
 
 public class ExtensionManagerFrame extends JFrame {
 

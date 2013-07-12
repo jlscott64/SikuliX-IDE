@@ -13,8 +13,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import org.sikuli.setup.PreferencesUser;
-import org.sikuli.setup.Debug;
+import org.sikuli.basics.PreferencesUser;
+import org.sikuli.basics.Debug;
 
 /**
  * Implements the logic for giving hints about the (correct) indentation of new

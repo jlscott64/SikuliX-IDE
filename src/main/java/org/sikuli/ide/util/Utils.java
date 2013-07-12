@@ -13,9 +13,9 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import javax.imageio.*;
-import org.sikuli.setup.Debug;
-import org.sikuli.setup.FileManager;
-import org.sikuli.setup.Settings;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
 
 public class Utils {
 //TODO consolidate with FileManager and Settings

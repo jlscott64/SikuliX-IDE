@@ -6,10 +6,10 @@
  */
 package org.sikuli.ide;
 
-import org.sikuli.setup.PreferencesUser;
+import org.sikuli.basics.PreferencesUser;
 import java.text.MessageFormat;
 import java.util.*;
-import org.sikuli.setup.Debug;
+import org.sikuli.basics.Debug;
 
 public class SikuliIDEI18N {
    static ResourceBundle i18nRB, i18nRB_en;

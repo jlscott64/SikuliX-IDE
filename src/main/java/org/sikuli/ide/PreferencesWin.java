@@ -6,7 +6,7 @@
  */
 package org.sikuli.ide;
 
-import org.sikuli.setup.PreferencesUser;
+import org.sikuli.basics.PreferencesUser;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import java.awt.*;
 import java.awt.event.*;
@@ -36,8 +36,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.Element;
 import org.jdesktop.layout.*;
 import org.sikuli.ide.util.Utils;
-import org.sikuli.setup.Debug;
-import org.sikuli.setup.Settings;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
 
 /*
  * Created by JFormDesigner on Mon Nov 16 10:13:52 EST 2009

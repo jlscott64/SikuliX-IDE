@@ -15,7 +15,7 @@ import org.sikuli.script.ScreenIF;
 import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.EventSubject;
-import org.sikuli.setup.Debug;
+import org.sikuli.basics.Debug;
 import org.sikuli.script.EventObserver;
 
 class EditorRegionButton extends JButton implements ActionListener, EventObserver {

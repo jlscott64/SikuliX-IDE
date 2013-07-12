@@ -6,7 +6,7 @@
  */
 package org.sikuli.ide;
 
-import org.sikuli.setup.PreferencesUser;
+import org.sikuli.basics.PreferencesUser;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
@@ -24,12 +24,12 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
-import org.sikuli.script.ImageLocator;
-import org.sikuli.setup.Settings;
+import org.sikuli.basics.ImageLocator;
+import org.sikuli.basics.Settings;
 import org.sikuli.ide.indentation.PythonIndentation;
 import org.sikuli.ide.util.Utils;
-import org.sikuli.setup.Debug;
-import org.sikuli.setup.FileManager;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 import org.sikuli.script.Location;
 import org.sikuli.script.SikuliScript;
 
@@ -351,7 +351,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   }
 
   private void convertSrcToHtml(String bundle) {
-    Settings.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
+    FileManager.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
             new String[]{bundle});
   }
 
@@ -359,7 +359,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (!PreferencesUser.getInstance().getAtSaveCleanBundle()) {
       return;
     }
-    Settings.getScriptRunner("jython", null, null).doSomethingSpecial("cleanBundle",
+    FileManager.getScriptRunner("jython", null, null).doSomethingSpecial("cleanBundle",
             new String[]{bundle});
   }
 

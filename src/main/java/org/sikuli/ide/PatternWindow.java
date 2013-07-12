@@ -14,8 +14,8 @@ import org.sikuli.script.Location;
 import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.ScreenUnion;
-import org.sikuli.setup.Debug;
-import org.sikuli.setup.FileManager;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 
 public class PatternWindow extends JFrame {
 

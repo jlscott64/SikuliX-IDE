@@ -6,7 +6,7 @@
  */
 package org.sikuli.ide;
 
-import org.sikuli.setup.Settings;
+import org.sikuli.basics.Settings;
 
 public class SikuliIDESettings {
 

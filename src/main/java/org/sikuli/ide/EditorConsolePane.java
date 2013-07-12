@@ -15,7 +15,7 @@ package org.sikuli.ide;
 // Permision to use and distribute into your own applications
 //
 // RJHM van den Bergh , rvdb@comweb.nl
-import org.sikuli.setup.PreferencesUser;
+import org.sikuli.basics.PreferencesUser;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -25,9 +25,10 @@ import java.util.regex.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
-import org.sikuli.setup.Debug;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 import org.sikuli.script.SikuliScript;
-import org.sikuli.setup.Settings;
+import org.sikuli.basics.Settings;
 
 public class EditorConsolePane extends JPanel implements Runnable {
 
@@ -63,7 +64,7 @@ public class EditorConsolePane extends JPanel implements Runnable {
         pin[i] = new PipedInputStream();
       }
 
-      if (Settings.getScriptRunner("jython", null, null).doSomethingSpecial("redirect", pin)) {
+      if (FileManager.getScriptRunner("jython", null, null).doSomethingSpecial("redirect", pin)) {
         Debug.log(2, "EditorConsolePane: init: stdout/stderr redirected to console");
         quit = false; // signals the Threads that they should exit
 

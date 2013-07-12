@@ -13,7 +13,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import org.sikuli.setup.Debug;
+import org.sikuli.basics.Debug;
 
 public class EditorLineNumberView extends JComponent implements MouseListener {
 

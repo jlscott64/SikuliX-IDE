@@ -28,7 +28,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.text.Element;
-import org.sikuli.setup.Debug;
+import org.sikuli.basics.Debug;
 import org.sikuli.script.Location;
 
 public class EditorPatternLabel extends EditorRegionLabel {

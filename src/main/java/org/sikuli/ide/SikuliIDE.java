@@ -40,11 +40,11 @@ import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenHighlighter;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.SikuliScript;
-import org.sikuli.setup.Debug;
-import org.sikuli.setup.FileManager;
-import org.sikuli.setup.IScriptRunner;
-import org.sikuli.setup.PreferencesUser;
-import org.sikuli.setup.Settings;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
+import org.sikuli.basics.IScriptRunner;
+import org.sikuli.basics.PreferencesUser;
+import org.sikuli.basics.Settings;
 import org.sikuli.utility.AutoUpdater;
 
 public class SikuliIDE extends JFrame {
@@ -1737,7 +1737,7 @@ public class SikuliIDE extends JFrame {
     protected void runPython(File f) throws Exception {
       File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
       File parent = path.getParentFile();
-      IScriptRunner srunner = Settings.getScriptRunner("jython", null, Settings.getArgs());
+      IScriptRunner srunner = FileManager.getScriptRunner("jython", null, Settings.getArgs());
       if (srunner == null) {
         Debug.error("Could not load the Jython script runner");
         return;

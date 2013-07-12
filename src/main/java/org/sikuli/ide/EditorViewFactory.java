@@ -6,7 +6,7 @@
  */
 package org.sikuli.ide;
 
-import org.sikuli.setup.PreferencesUser;
+import org.sikuli.basics.PreferencesUser;
 import java.awt.*;
 import java.util.*;
 import java.util.prefs.PreferenceChangeEvent;
@@ -15,8 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JComponent;
 import javax.swing.text.*;
-import org.sikuli.setup.Settings;
-import org.sikuli.setup.Debug;
+import org.sikuli.basics.Settings;
+import org.sikuli.basics.Debug;
 
 public class EditorViewFactory implements ViewFactory {
 
