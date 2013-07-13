@@ -28,24 +28,25 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.sikuli.ide.EditorKit;
 import org.sikuli.ide.extmanager.ExtensionManagerFrame;
 import org.sikuli.ide.util.Utils;
-import org.sikuli.script.CommandArgs;
+import org.sikuli.basics.CommandArgs;
 import org.sikuli.script.EventObserver;
 import org.sikuli.script.EventSubject;
-import org.sikuli.script.HotkeyEvent;
-import org.sikuli.script.HotkeyListener;
-import org.sikuli.script.HotkeyManager;
+import org.sikuli.basics.HotkeyEvent;
+import org.sikuli.basics.HotkeyListener;
+import org.sikuli.basics.HotkeyManager;
 import org.sikuli.script.Location;
 import org.sikuli.script.OverlayCapturePrompt;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenHighlighter;
 import org.sikuli.script.ScreenImage;
-import org.sikuli.script.SikuliScript;
+import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.IScriptRunner;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
-import org.sikuli.utility.AutoUpdater;
+import org.sikuli.basics.AutoUpdater;
+import org.sikuli.basics.SikuliX;
 
 public class SikuliIDE extends JFrame {
 
@@ -1737,7 +1738,7 @@ public class SikuliIDE extends JFrame {
     protected void runPython(File f) throws Exception {
       File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
       File parent = path.getParentFile();
-      IScriptRunner srunner = FileManager.getScriptRunner("jython", null, Settings.getArgs());
+      IScriptRunner srunner = SikuliX.getScriptRunner("jython", null, Settings.getArgs());
       if (srunner == null) {
         Debug.error("Could not load the Jython script runner");
         return;

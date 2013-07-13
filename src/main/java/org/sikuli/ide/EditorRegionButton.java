@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
 import org.sikuli.script.OverlayCapturePrompt;
-import org.sikuli.script.ScreenIF;
+import org.sikuli.script.IScreen;
 import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.EventSubject;
@@ -70,7 +70,7 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
 
   private BufferedImage getRegionImage(int x, int y, int w, int h) {
     Region region = Region.create(x, y, w, h);
-    ScreenIF _screen = region.getScreen();
+    IScreen _screen = region.getScreen();
     ScreenImage simg = _screen.capture();
     int scr_w = simg.w, scr_h = simg.h;
     int max_h = 80; // FIXME: put max_h in UserPreferences

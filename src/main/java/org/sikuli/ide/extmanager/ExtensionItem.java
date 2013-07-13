@@ -24,7 +24,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import org.sikuli.ide.SikuliIDEI18N;
 import org.sikuli.basics.Debug;
-import org.sikuli.script.ExtensionManager;
+import org.sikuli.basics.ExtensionManager;
 import org.sikuli.basics.Settings;
 
 class ExtensionItem extends JPanel implements ActionListener {

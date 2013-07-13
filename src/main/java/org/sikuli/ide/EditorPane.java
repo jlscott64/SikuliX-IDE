@@ -31,7 +31,8 @@ import org.sikuli.ide.util.Utils;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.script.Location;
-import org.sikuli.script.SikuliScript;
+import org.sikuli.basics.SikuliScript;
+import org.sikuli.basics.SikuliX;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 
@@ -351,7 +352,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   }
 
   private void convertSrcToHtml(String bundle) {
-    FileManager.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
+    SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
             new String[]{bundle});
   }
 
@@ -359,7 +360,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (!PreferencesUser.getInstance().getAtSaveCleanBundle()) {
       return;
     }
-    FileManager.getScriptRunner("jython", null, null).doSomethingSpecial("cleanBundle",
+    SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("cleanBundle",
             new String[]{bundle});
   }
 

@@ -27,8 +27,9 @@ import javax.swing.text.*;
 import javax.swing.text.html.*;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.script.SikuliScript;
+import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.Settings;
+import org.sikuli.basics.SikuliX;
 
 public class EditorConsolePane extends JPanel implements Runnable {
 
@@ -64,7 +65,7 @@ public class EditorConsolePane extends JPanel implements Runnable {
         pin[i] = new PipedInputStream();
       }
 
-      if (FileManager.getScriptRunner("jython", null, null).doSomethingSpecial("redirect", pin)) {
+      if (SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("redirect", pin)) {
         Debug.log(2, "EditorConsolePane: init: stdout/stderr redirected to console");
         quit = false; // signals the Threads that they should exit
 
