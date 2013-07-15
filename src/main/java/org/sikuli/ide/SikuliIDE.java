@@ -46,6 +46,7 @@ import org.sikuli.basics.IScriptRunner;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.AutoUpdater;
+import org.sikuli.basics.CommandArgsEnum;
 import org.sikuli.basics.SikuliX;
 
 public class SikuliIDE extends JFrame {
@@ -86,15 +87,12 @@ public class SikuliIDE extends JFrame {
   private JMenu _toolMenu = new JMenu(_I("menuTool"));
   private JMenu _helpMenu = new JMenu(_I("menuHelp"));
   private JXCollapsiblePane _sidePane;
-  private JPanel _unitPane;
   private JCheckBoxMenuItem _chkShowUnitTest;
   private JMenuItem chkShowCmdList = null;
   private JCheckBoxMenuItem chkShowThumbs;
   //private UnitTestRunner _testRunner;
-  private static CommandLine _cmdLine;
-  private static boolean _useStderr = false;
+  private static CommandLine cmdLine;
   private static SikuliIDE _instance = null;
-  private static Icon PY_SRC_ICON = getIconResource("/icons/py-src-16x16.png");
   private boolean _inited = false;
   private static boolean runMe = false;
   private int restoredScripts = 0;
@@ -110,14 +108,6 @@ public class SikuliIDE extends JFrame {
     }
   }
 
-  public static void errorMsg(String msg) {
-    if (_useStderr) {
-      System.err.println(msg);
-    } else {
-      JOptionPane.showMessageDialog(null, msg);
-    }
-  }
-
   public static ImageIcon getIconResource(String name) {
     URL url = SikuliIDE.class.getResource(name);
     if (url == null) {
@@ -129,62 +119,39 @@ public class SikuliIDE extends JFrame {
 
 //TODO run only one windowed instance of IDE
   public static void main(String[] args) {
-    File file;
-    String fileName;
-
-    Settings.showJavaInfo();
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
-    _cmdLine = cmdArgs.getCommandLine(args);
-    boolean _newCommandline = false;
+    cmdLine = cmdArgs.getCommandLine(args);
 
-    if (_cmdLine.hasOption("h")) {
+    if (cmdLine.hasOption("h")) {
       cmdArgs.printHelp();
       return;
     }
 
-    if (_cmdLine.hasOption("test")) {
-      Debug.error("Test no longer supported! See docs for alternatives");
-      return;
-    }
-
-    if (_cmdLine.hasOption("s")) {
-      _useStderr = true;
-    }
-
-    if (_cmdLine.hasOption("load")) {
+    if (cmdLine.hasOption("load")) {
 //TODO preload .sikuli scripts
-      _newCommandline = true;
-      Debug.error("Option -load: not yet working");
+      Debug.error("Option -load: not yet supüported");
       return;
     }
 
-    if (!_newCommandline && args != null && args.length >= 1) {
-			int exitCode = 0;
-			fileName = args[0];
-			if (! fileName.startsWith("-") && fileName.endsWith(".skl")) {
-				String f = FileManager.unzipSKL(fileName);
-				if (f != null) {
-					args[0] = f;
-          _runningSkl = true;
-				} else {
-					System.exit(-2);
-				}
-        Debug.error(
-            "Sikuli IDE is no longer used to run scripts from command line\n"
-            + "This is delegated now to sikuli-script.jar\n"
-            + "Look into the docs for more information on command line usage");
-				try {
-					SikuliScript.main(args);
-				} catch (Exception e) {
-				}
-				if (! _runningSkl) {
-//TODO System.exit() und return code
-					System.exit(exitCode);
-				} else {
-					return;
-				}
-			}
+    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
+      Debug.setDebugLevel(cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname()));      
+    }
+    
+    if (cmdLine.hasOption(CommandArgsEnum.LOGFILE.shortname())) {
+      String val = cmdLine.getOptionValue(CommandArgsEnum.LOGFILE.longname());
+      Debug.setLogFile(val == null ? "" : val);
+    }
+    
+    if (cmdLine.hasOption(CommandArgsEnum.USERLOGFILE.shortname())) {
+      String val = cmdLine.getOptionValue(CommandArgsEnum.USERLOGFILE.longname());      
+      Debug.setUserLogFile(val == null ? "" : val);
+    }
+    
+    Settings.showJavaInfo();
+
+    if (cmdLine.hasOption("c")) {
+      System.setProperty("sikuli.console", "false");
     }
 
 // we should open the IDE
