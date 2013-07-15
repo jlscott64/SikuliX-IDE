@@ -20,7 +20,7 @@ import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.ScreenUnion;
 import org.sikuli.ide.util.LoadingSpinner;
-import org.sikuli.script.natives.Vision;
+import org.sikuli.basics.proxies.Vision;
 import org.sikuli.basics.Debug;
 
 class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentListener {
