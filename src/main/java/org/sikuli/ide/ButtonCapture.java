@@ -23,7 +23,8 @@ import org.sikuli.basics.Settings;
 
 class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable, EventObserver {
 
-	protected Element _line;
+  private static final String me = "ButtonCapture: "; 
+  protected Element _line;
 	protected EditorPane _codePane;
 	protected boolean _isCapturing;
   private EditorPatternLabel _lbl = null;
@@ -243,7 +244,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
 						}
 					}
 				} catch (BadLocationException ble) {
-					ble.printStackTrace();
+					Debug.error(me + "Problem inserting Button!\n%s", ble.getMessage());
 				}
 				_codePane.select(old_sel_start, old_sel_end);
 				_codePane.requestFocus();

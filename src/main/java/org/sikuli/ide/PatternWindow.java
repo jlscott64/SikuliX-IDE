@@ -19,6 +19,7 @@ import org.sikuli.basics.FileManager;
 
 public class PatternWindow extends JFrame {
 
+  private static final String me = "PatternWindow: ";
 	private EditorPatternButton _imgBtn;
 	private PatternPaneScreenshot _screenshot;
 	private PatternPaneTargetOffset _tarOffsetPane;
@@ -78,7 +79,7 @@ public class PatternWindow extends JFrame {
 			_screenshot.setParameters(_imgBtn.getFilename(),
 							exact, similarity, numMatches);
 		} catch (Exception e) {
-			e.printStackTrace();
+      Debug.error(me + "Problem while setting up pattern pane\n%s", e.getMessage());
 		}
 		setDirty(false);
 		setVisible(true);

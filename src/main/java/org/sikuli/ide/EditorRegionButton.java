@@ -20,6 +20,7 @@ import org.sikuli.script.EventObserver;
 
 class EditorRegionButton extends JButton implements ActionListener, EventObserver {
 
+  private static final String me = "EditorRegionButton: ";
   EditorPane _pane;
   int _x, _y, _w, _h;
 
@@ -86,7 +87,7 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
       screen_g2d.setColor(new Color(255, 0, 0, 150));
       screen_g2d.fillRect(sx, sy, sw, sh);
     } catch (RasterFormatException e) {
-      e.printStackTrace();
+      Debug.error(me + "getRegionImage: Problem making image\n%s", e.getMessage());
     }
     screen_g2d.dispose();
     return screen;
@@ -99,8 +100,7 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
               w = Integer.valueOf(tokens[3].trim()), h = Integer.valueOf(tokens[4].trim());
       return new EditorRegionButton(parentPane, x, y, w, h);
     } catch (Exception e) {
-      Debug.error("Can't parse Region: " + e.getMessage());
-      e.printStackTrace();
+      Debug.error(me + "createFromString: Problem parsing region expression\n%s", e.getMessage());
     }
     return null;
   }

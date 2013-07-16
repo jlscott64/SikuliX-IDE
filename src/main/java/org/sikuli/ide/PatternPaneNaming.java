@@ -13,6 +13,7 @@ import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import org.sikuli.basics.Debug;
 import org.sikuli.script.TextRecognizer;
 
 //RaiMan not used import org.sikuli.script.TextRecognizer;
@@ -146,6 +147,7 @@ public class PatternPaneNaming extends JPanel {
    }
 }
 class AutoCompleteCombo extends JComboBox {
+  private static final String me = "PatternPaneNaming: ";
    final static int TXT_FILENAME_LENGTH = 20;
    public int caretPos = 0;
    public JTextField editor = null;
@@ -189,7 +191,7 @@ class AutoCompleteCombo extends JComboBox {
                try {
                   text = editor.getText(0, caretPos);
                } catch (Exception ex) {
-                  ex.printStackTrace();
+                Debug.error(me + "setHook: Problem getting image file name\n%s", ex.getMessage());
                }
                int n = getItemCount();
                for (int i = 0; i < n; i++) {

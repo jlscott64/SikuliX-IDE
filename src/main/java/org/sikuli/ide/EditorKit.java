@@ -19,6 +19,7 @@ import org.sikuli.basics.Debug;
 
 public class EditorKit extends StyledEditorKit {
 
+  private static final String me = "EditorKit: ";
   private ViewFactory _viewFactory;
 
   public EditorKit() {
@@ -86,8 +87,8 @@ public class EditorKit extends StyledEditorKit {
             doc.insertString(start, tabWhitespace, null);
           }
         } catch (BadLocationException ble) {
-          ble.printStackTrace();
-          UIManager.getLookAndFeel().provideErrorFeedback(text);
+           Debug.error(me + "Problem while indenting line\n%s", ble.getMessage());
+           UIManager.getLookAndFeel().provideErrorFeedback(text);
         }
       } else {
         text.replaceSelection(tabWhitespace);
@@ -142,7 +143,7 @@ public class EditorKit extends StyledEditorKit {
             handleDecreaseIndent(end, elem, doc);
           }
         } catch (BadLocationException ble) {
-          ble.printStackTrace();
+          Debug.error(me + "Problem while de-indenting line\n%s", ble.getMessage());
           UIManager.getLookAndFeel().provideErrorFeedback(text);
         }
       } else {
@@ -150,7 +151,7 @@ public class EditorKit extends StyledEditorKit {
         try {
           handleDecreaseIndent(line1, elem, doc);
         } catch (BadLocationException ble) {
-          ble.printStackTrace();
+          Debug.error(me + "Problem while de-indenting line\n%s", ble.getMessage());
           UIManager.getLookAndFeel().provideErrorFeedback(text);
         }
       }
@@ -279,7 +280,7 @@ public class EditorKit extends StyledEditorKit {
 
       } catch (BadLocationException ble) {
         text.replaceSelection("\n");
-        ble.printStackTrace();
+        Debug.error(me + "Problem while inserting new line with auto-indent\n%s", ble.getMessage());
       }
 
     }
@@ -402,7 +403,7 @@ public class EditorKit extends StyledEditorKit {
           pos = txt.viewToModel(new Point(curRect.x, tarEndRect.y));
         }
       } catch (BadLocationException e) {
-        e.printStackTrace();
+        Debug.error(me + "Problem getting next visual position\n%s", e.getMessage());
       }
 
       return pos;
@@ -482,7 +483,7 @@ public class EditorKit extends StyledEditorKit {
         }
 
       } catch (BadLocationException ble) {
-        ble.printStackTrace();
+        Debug.error(me + "Problem while trying to move caret\n%s", ble.getMessage());
       }
 
     }

@@ -26,13 +26,11 @@ import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.FileManager;
-import org.sikuli.basics.SikuliScript;
-import org.sikuli.basics.Settings;
 import org.sikuli.basics.SikuliX;
 
 public class EditorConsolePane extends JPanel implements Runnable {
 
+  private static final String me = "EditorConsolePane: ";
   static boolean ENABLE_IO_REDIRECT = true;
 
   static {
@@ -89,7 +87,7 @@ public class EditorConsolePane extends JPanel implements Runnable {
     try {
       kit.insertHTML(doc, doc.getLength(), msg, 0, 0, null);
     } catch (Exception e) {
-      e.printStackTrace();
+      Debug.error(me + "Problem appending text to message area!\n%s", e.getMessage());
     }
   }
   /*
@@ -146,8 +144,7 @@ public class EditorConsolePane extends JPanel implements Runnable {
       }
 
     } catch (Exception e) {
-      appendMsg("\nConsole reports an Internal error.");
-      appendMsg("The error is: " + e);
+      Debug.error(me + "Console reports an internal error:\n%s", e.getMessage());
     }
 
   }
@@ -172,6 +169,7 @@ public class EditorConsolePane extends JPanel implements Runnable {
 }
 
 class JTextPaneHTMLTransferHandler extends TransferHandler {
+  private static final String me = "EditorConsolePane: ";
 
   public JTextPaneHTMLTransferHandler() {
   }
@@ -214,12 +212,11 @@ class JTextPaneHTMLTransferHandler extends TransferHandler {
           String str = sdoc.getText(start, end - start);
           output.append(str);
         } catch (BadLocationException ble) {
-          ble.printStackTrace();
+          Debug.error(me + "Copy-paste problem!\n%s", ble.getMessage());
         }
       }
       i = end;
     }
-
     return new StringSelection(output.toString());
   }
 }

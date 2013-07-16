@@ -14,7 +14,8 @@ import javax.swing.text.*;
 import org.sikuli.basics.Debug;
 
 public class EditorCurrentLineHighlighter implements CaretListener {
-
+  
+  private static final String me = "EditorCurrentLineHighlighter: ";
   static final Color DEFAULT_COLOR = new Color(230, 230, 210);
   static final Color ERROR_COLOR = new Color(255, 105, 105);
   private Highlighter.HighlightPainter painter;
@@ -48,7 +49,7 @@ public class EditorCurrentLineHighlighter implements CaretListener {
       Document doc = comp.getDocument();
       Element root = doc.getDefaultRootElement();
       int line = root.getElementIndex(pos);
-      Debug.log(6, "LineHighlight: Caret at " + pos + " line " + line + " for " + start + "-" + end);
+      Debug.log(5, "LineHighlight: Caret at " + pos + " line " + line + " for " + start + "-" + end);
       if (SikuliIDE.getStatusbar() != null) {
         SikuliIDE.getStatusbar().setCaretPosition(line + 1, pos - start + 1);
       }
@@ -57,7 +58,7 @@ public class EditorCurrentLineHighlighter implements CaretListener {
         highlight = comp.getHighlighter().addHighlight(start, end, painter);
         comp.repaint();
       } catch (BadLocationException ex) {
-        ex.printStackTrace();
+        Debug.error(me + "Problem while highlighting line %d\n%s", pos, ex.getMessage());
       }
     }
   }

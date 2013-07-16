@@ -6,20 +6,15 @@
  */
 package org.sikuli.ide;
 
-import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.StyledEditorKit;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoableEdit;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import org.sikuli.basics.Debug;
@@ -50,6 +45,7 @@ class MyCompoundEdit extends CompoundEdit {
 
 public class EditorUndoManager extends AbstractUndoableEdit
                   implements UndoableEditListener {
+  private static final String me = "EditorUndoManager: "; 
    String lastEditName=null;
    ArrayList<MyCompoundEdit> edits=new ArrayList<MyCompoundEdit>();
    MyCompoundEdit current;
@@ -70,7 +66,7 @@ public class EditorUndoManager extends AbstractUndoableEdit
                if (text.contains("\n"))
                   isNeedStart=true;
             } catch (BadLocationException e1) {
-               e1.printStackTrace();
+              Debug.error(me + "undoableEditHappened: Problem getting text\n%s", e1.getMessage());
             }
          }
 

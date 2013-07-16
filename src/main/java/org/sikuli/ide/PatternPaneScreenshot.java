@@ -25,6 +25,7 @@ import org.sikuli.basics.Debug;
 
 class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentListener {
 
+  private static final String me = "PatternPaneScreenshot: ";
 	final static int DEFAULT_H = 500;
 	static int MAX_NUM_MATCHING = 100;
 	Region _match_region;
@@ -165,7 +166,7 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
 							setParameters(exact, similarity, numMatches);
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+            Debug.error(me + "Problem while setting up pattern pane\n%s", e.getMessage());
 					}
 				}
 			});

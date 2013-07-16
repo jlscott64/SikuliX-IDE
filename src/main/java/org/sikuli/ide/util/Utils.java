@@ -6,11 +6,9 @@
  */
 package org.sikuli.ide.util;
 
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.*;
 import java.io.*;
-import java.util.*;
 import java.util.zip.*;
 import javax.imageio.*;
 import org.sikuli.basics.Debug;
@@ -143,7 +141,8 @@ public class Utils {
 		try {
 			ImageIO.write(img, "png", new File(fullpath));
 		} catch (IOException e) {
-			e.printStackTrace();
+      Debug.error("Util.saveImage: Problem trying to save image file: %s\n%s", 
+              fullpath, e.getMessage());
 			return null;
 		}
 		return fullpath;

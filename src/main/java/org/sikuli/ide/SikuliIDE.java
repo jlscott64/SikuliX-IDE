@@ -39,7 +39,6 @@ import org.sikuli.script.OverlayCapturePrompt;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenHighlighter;
 import org.sikuli.script.ScreenImage;
-import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.IScriptRunner;
@@ -52,6 +51,7 @@ import org.sikuli.basics.SikuliX;
 public class SikuliIDE extends JFrame {
 
   // RaiMan not used final static boolean ENABLE_RECORDING = false;
+  private static final String me = "SikuliIDE: ";
   final static boolean ENABLE_UNIFIED_TOOLBAR = true;
   final static Color COLOR_SEARCH_FAILED = Color.red;
   final static Color COLOR_SEARCH_NORMAL = Color.black;
@@ -130,7 +130,7 @@ public class SikuliIDE extends JFrame {
 
     if (cmdLine.hasOption("load")) {
 //TODO preload .sikuli scripts
-      Debug.error("Option -load: not yet supüported");
+      Debug.error("Option -load: not yet supported");
       return;
     }
 
@@ -148,6 +148,8 @@ public class SikuliIDE extends JFrame {
       Debug.setUserLogFile(val == null ? "" : val);
     }
     
+    Settings.setArgs(cmdArgs.getUserArgs());
+    
     Settings.showJavaInfo();
 
     if (cmdLine.hasOption("c")) {
@@ -159,7 +161,7 @@ public class SikuliIDE extends JFrame {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			Debug.error(me + "Problem loading UIManager!\nError: %s", e.getMessage());
 		}
 
 		if (Settings.isMac()) {
@@ -304,7 +306,7 @@ public class SikuliIDE extends JFrame {
       Constructor constr = c.getConstructor();
       _native = (NativeLayer) constr.newInstance();
     } catch (Exception e) {
-      e.printStackTrace();
+			Debug.error(me + "Reflection problem: org.sikuli.ide.NativeLayerFor...!\nError: %s", e.getMessage());
     }
   }
 
@@ -341,7 +343,7 @@ public class SikuliIDE extends JFrame {
           sbuf.append(bundlePath);
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        Debug.error(me + "Problem while trying to shutdown!\nError: %s", e.getMessage());
         return false;
       }
     }
@@ -587,14 +589,13 @@ public class SikuliIDE extends JFrame {
     }
 
     public MenuAction(String item) throws NoSuchMethodException {
-      Class[] params = new Class[0];
       Class[] paramsWithEvent = new Class[1];
       try {
         paramsWithEvent[0] = Class.forName("java.awt.event.ActionEvent");
         actMethod = this.getClass().getMethod(item, paramsWithEvent);
         action = item;
       } catch (ClassNotFoundException cnfe) {
-        Debug.error("Can't find menu action: " + cnfe);
+        Debug.error(me + "Can't find menu action: " + cnfe);
       }
     }
 
@@ -607,7 +608,8 @@ public class SikuliIDE extends JFrame {
           params[0] = e;
           actMethod.invoke(this, params);
         } catch (Exception ex) {
-          ex.printStackTrace();
+    			Debug.error(me + "Problem when trying to invoke menu action %s\nError: %s", 
+                  action, ex.getMessage());
         }
       }
     }
@@ -723,10 +725,11 @@ public class SikuliIDE extends JFrame {
 
     public void doLoad(ActionEvent ae) {
       alreadyOpenedTab = _mainPane.getSelectedIndex();
+      String fname = null;
       try {
         doNew(ae);
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-        String fname = codePane.loadFile();
+        fname = codePane.loadFile();
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         } else {
@@ -734,57 +737,66 @@ public class SikuliIDE extends JFrame {
           _mainPane.setSelectedIndex(alreadyOpenedTab);
         }
       } catch (IOException eio) {
-        eio.printStackTrace();
+    			Debug.error(me + "Problem when trying to load %s\nError: %s", 
+                  fname, eio.getMessage());
       }
     }
 
     public void doSave(ActionEvent ae) {
+      String fname = null;    
       try {
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-        String fname = codePane.saveFile();
+        fname = codePane.saveFile();
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         }
       } catch (IOException eio) {
-        eio.printStackTrace();
+    			Debug.error(me + "Problem when trying to save %s\nError: %s", 
+                  fname, eio.getMessage());
       }
     }
 
     public boolean doSaveIntern(int tabIndex) {
       JScrollPane scrPane = (JScrollPane) _mainPane.getComponentAt(tabIndex);
       EditorPane codePane = (EditorPane) scrPane.getViewport().getView();
+      String fname = null;
       try {
-        String fname = codePane.saveFile();
+        fname = codePane.saveFile();
         if (fname != null) {
           SikuliIDE.getInstance().setFileTabTitle(fname, tabIndex);
         } else {
           return false;
         }
       } catch (IOException eio) {
-        eio.printStackTrace();
+        Debug.error(me + "Problem when trying to save %s\nError: %s", 
+                fname, eio.getMessage());
         return false;
       }
       return true;
     }
 
     public void doSaveAs(ActionEvent ae) {
+      String fname = null;
       try {
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-        String fname = codePane.saveAsFile();
+        fname = codePane.saveAsFile();
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         }
       } catch (IOException eio) {
-        eio.printStackTrace();
+    			Debug.error(me + "Problem when trying to save %s\nError: %s", 
+                  fname, eio.getMessage());
       }
     }
 
     public void doExport(ActionEvent ae) {
+      String fname = null;
       try {
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-        String fname = codePane.exportAsZip();
+        fname = codePane.exportAsZip();
       } catch (Exception ex) {
-        ex.printStackTrace();
+    			Debug.error(me + "Problem when trying to save %s\nError: %s", 
+                  fname, ex.getMessage());
       }
     }
 
@@ -1386,7 +1398,7 @@ public class SikuliIDE extends JFrame {
       initToolMenu();
       initHelpMenu();
     } catch (NoSuchMethodException e) {
-      e.printStackTrace();
+      Debug.error(me + "Problem when initializing menues\nError: %s", e.getMessage());
     }
 
     _menuBar.add(_fileMenu);
@@ -1820,7 +1832,6 @@ public class SikuliIDE extends JFrame {
         //				 getCurrentCodePane());
       } catch (Exception e) {
         Debug.error("Error in starting up SikuliGenerator...");
-        e.printStackTrace();
       }
     }
 
@@ -1911,20 +1922,19 @@ public class SikuliIDE extends JFrame {
             new CloseableTabbedPaneListener() {
               @Override
               public boolean closeTab(int i) {
+                EditorPane codePane;
                 try {
                   JScrollPane scrPane = (JScrollPane) _mainPane.getComponentAt(i);
-                  EditorPane codePane = (EditorPane) scrPane.getViewport().getView();
-                  int count = _mainPane.getComponentCount();
-                  Debug.log(8, "close tab " + i + " n:" + _mainPane.getComponentCount());
+                  codePane = (EditorPane) scrPane.getViewport().getView();
+                  Debug.log(4, "close tab " + i + " n:" + _mainPane.getComponentCount());
                   boolean ret = codePane.close();
-                  Debug.log(8, "after close tab n:" + _mainPane.getComponentCount());
+                  Debug.log(4, "after close tab n:" + _mainPane.getComponentCount());
                   if (ret && _mainPane.getTabCount() < 2) {
                     (new FileAction()).doNew(null);
                   }
                   return ret;
                 } catch (Exception e) {
-                  Debug.info("Can't close this tab: " + e.getStackTrace());
-                  e.printStackTrace();
+            			Debug.error(me + "Problem closing tab %d\nError: %s", i, e.getMessage());
                   return false;
                 }
               }

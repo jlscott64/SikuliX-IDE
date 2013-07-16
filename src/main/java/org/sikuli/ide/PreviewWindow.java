@@ -6,10 +6,7 @@ package org.sikuli.ide;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.HashSet;
-import java.util.Set;
 import org.sikuli.script.OverlayTransparentWindow;
-import org.sikuli.script.ScreenHighlighter;
 
 /**
  *

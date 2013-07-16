@@ -36,6 +36,7 @@ import org.sikuli.basics.SikuliX;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 
+  private static final String me = "EditorPane: ";
   private PreferencesUser pref;
   private File _editingFile;
   private String _srcBundlePath = null;
@@ -338,7 +339,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
         saveAsFile();
         return _editingFile;
       } catch (IOException e) {
-        e.printStackTrace();
+        Debug.error(me + "getCurrentFile: Problem while trying to save %s\n%s", 
+                _editingFile.getAbsolutePath(), e.getMessage());
       }
     }
     return _editingFile;
@@ -372,7 +374,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
         File newFile = FileManager.smartCopy(filename, bundlePath);
         return newFile;
       } catch (IOException e) {
-        e.printStackTrace();
+        Debug.error(me + "copyFileToBundle: Problem while trying to save %s\n%s", 
+                filename, e.getMessage());
         return f;
       }
     }
@@ -609,7 +612,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       end = parseLine(start, end, patRegionStr);
       end = parseLine(start, end, patPngStr);
     } catch (BadLocationException e) {
-      e.printStackTrace();
+      Debug.error(me + "parseRange: Problem while trying to parse line\n%s", e.getMessage());
     }
     return end;
   }
@@ -707,7 +710,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       try {
         getDocument().remove(sel_start, sel_end - sel_start);
       } catch (BadLocationException e) {
-        e.printStackTrace();
+        Debug.error(me + "insertString: Problem while trying to insert\n%s", e.getMessage());
       }
     }
     int pos = getCaretPosition();
@@ -722,7 +725,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     try {
       doc.insertString(pos, str, null);
     } catch (Exception e) {
-      e.printStackTrace();
+      Debug.error(me + "insertString: Problem while trying to insert at pos\n%s", e.getMessage());
     }
   }
 
@@ -735,7 +738,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       int end = doc.getLength();
       //end = parseLine(start, end, patHistoryBtnStr);
     } catch (Exception e) {
-      e.printStackTrace();
+      Debug.error(me + "appendString: Problem while trying to append\n%s", e.getMessage());
     }
   }
   //</editor-fold>
@@ -833,6 +836,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   //<editor-fold defaultstate="collapsed" desc="Transfer code incl. images between code panes">
   private class MyTransferHandler extends TransferHandler {
 
+    private static final String me = "EditorPaneTransferHandler: ";
     Map<String, String> _copiedImgs = new HashMap<String, String>();
 
     @Override
@@ -852,8 +856,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
         try {
           doc.remove(sel_start, sel_end - sel_start);
         } catch (BadLocationException e) {
-          e.printStackTrace();
-
+          Debug.error(me + "exportDone: Problem while trying to remove text\n%s", e.getMessage());
         }
       }
 
@@ -879,7 +882,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
         kit.write(writer, doc, sel_start, sel_end - sel_start, _copiedImgs);
         return new StringSelection(writer.toString());
       } catch (Exception e) {
-        e.printStackTrace();
+        Debug.error(me + "createTransferable: Problem creating text to copy\n%s", e.getMessage());
       }
       return null;
     }
@@ -916,7 +919,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
           }
           targetTextPane.insertString(transferString);
         } catch (Exception e) {
-          Debug.error("Can't transfer: " + t.toString());
+          Debug.error(me + "importData: Problem pasting text\n%s", e.getMessage());
         }
         return true;
       }

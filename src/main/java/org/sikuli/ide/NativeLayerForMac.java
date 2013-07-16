@@ -17,6 +17,8 @@ import org.sikuli.basics.Debug;
 // full key table: http://www.mactech.com/articles/mactech/Vol.04/04.12/Macinkeys/
 // modifiers code: http://www.mactech.com/macintosh-c/chap02-1.html
 public class NativeLayerForMac implements NativeLayer, AboutHandler, PreferencesHandler, OpenFilesHandler, QuitHandler {
+  
+  private static final String me = "NativeLayerForMac: ";
 
 	@Override
 	public void initIDE(final SikuliIDE ide) {
@@ -46,7 +48,7 @@ public class NativeLayerForMac implements NativeLayer, AboutHandler, Preferences
 					try {
 						SikuliIDE.main(new String[] {fname});
 					} catch (Exception e) {
-						e.printStackTrace();
+            Debug.error(me + "openFiles: Problem starting IDE\n%s", e.getMessage());
 					}
 				}
 			};
