@@ -46,6 +46,8 @@ import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.AutoUpdater;
 import org.sikuli.basics.CommandArgsEnum;
+import org.sikuli.basics.IResourceLoader;
+import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.SikuliX;
 
 public class SikuliIDE extends JFrame {
@@ -134,6 +136,10 @@ public class SikuliIDE extends JFrame {
       return;
     }
 
+    if (cmdLine.hasOption("c")) {
+      System.setProperty("sikuli.console", "false");
+    }
+
     if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
       Debug.setDebugLevel(cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname()));      
     }
@@ -148,16 +154,19 @@ public class SikuliIDE extends JFrame {
       Debug.setUserLogFile(val == null ? "" : val);
     }
     
+    if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname()) ||
+        cmdLine.hasOption(CommandArgsEnum.TEST.shortname()) ||
+        cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
+      Debug.log(3,me + "Switching to SikuliScript with option -r, -t or -i");
+      SikuliScript.main(args);
+    }
+    
     Settings.setArgs(cmdArgs.getUserArgs());
     
     Settings.showJavaInfo();
 
-    if (cmdLine.hasOption("c")) {
-      System.setProperty("sikuli.console", "false");
-    }
-
 // we should open the IDE
-		initNativeLayer();
+    initNativeLayer();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -193,6 +202,9 @@ public class SikuliIDE extends JFrame {
     }
 
     _native.initIDE(this);
+
+    IResourceLoader loader = FileManager.getNativeLoader("basic", args);
+    loader.check(Settings.SIKULI_LIB);
 
     _windowSize = prefs.getIdeSize();
     _windowLocation = prefs.getIdeLocation();
@@ -400,13 +412,14 @@ public class SikuliIDE extends JFrame {
   }
 
   public void setFileTabTitle(String fname, int tabIndex) {
+    String fullName = fname;
     if (fname.endsWith("/")) {
       fname = fname.substring(0, fname.length() - 1);
     }
     fname = fname.substring(fname.lastIndexOf("/") + 1);
     fname = fname.substring(0, fname.lastIndexOf("."));
     _mainPane.setTitleAt(tabIndex, fname);
-    this.setTitle(fname);
+    this.setTitle(fullName);
   }
 
   public void setCurrentFileTabTitleDirty(boolean isDirty) {
@@ -1946,7 +1959,14 @@ public class SikuliIDE extends JFrame {
         JTabbedPane tab = (JTabbedPane) e.getSource();
         int i = tab.getSelectedIndex();
         if (i >= 0) {
-          SikuliIDE.this.setTitle(tab.getTitleAt(i));
+          JScrollPane scrPane = (JScrollPane) _mainPane.getComponentAt(i);
+          EditorPane codePane = (EditorPane) scrPane.getViewport().getView();
+          String fname = codePane.getCurrentSrcDir();
+          if (fname == null) {
+            SikuliIDE.this.setTitle(tab.getTitleAt(i));
+          } else {
+            SikuliIDE.this.setTitle(fname);
+          }
           SikuliIDE.this.chkShowThumbs.setState(SikuliIDE.this.getCurrentCodePane().showThumbs);
         }
         updateUndoRedoStates();

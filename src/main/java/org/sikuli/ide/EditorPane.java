@@ -324,6 +324,14 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   public boolean isSourceBundleTemp() {
     return _srcBundleTemp;
   }
+  
+  public String getCurrentSrcDir() {
+    if(_srcBundlePath != null) {
+      return _editingFile.getParent();
+    } else {
+      return null;
+    }
+  }
 
   private String getCurrentShortFilename() {
     if (_srcBundlePath != null) {
