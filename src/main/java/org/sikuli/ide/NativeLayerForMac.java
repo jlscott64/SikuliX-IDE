@@ -9,8 +9,6 @@ package org.sikuli.ide;
 import com.apple.eawt.*;
 import java.io.File;
 import java.util.List;
-import javax.swing.JOptionPane;
-import org.sikuli.ide.SikuliIDE.FileAction;
 import org.sikuli.basics.Debug;
 
 // http://lists.apple.com/archives/mac-games-dev/2001/Sep/msg00113.html

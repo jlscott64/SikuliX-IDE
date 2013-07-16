@@ -26,7 +26,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import org.sikuli.basics.ImageLocator;
 import org.sikuli.basics.Settings;
-import org.sikuli.ide.indentation.PythonIndentation;
+import org.sikuli.jython.PythonIndentation;
 import org.sikuli.ide.util.Utils;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
