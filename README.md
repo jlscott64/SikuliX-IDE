@@ -7,8 +7,12 @@ The IDE to edit and run Sikuli scripts (supported scripting languages Python/Jyt
 <br /><br />
 **MANDATORY ;-)** [Have a look at major improvements and new features](https://github.com/RaiMan/SikuliX-IDE/wiki/Release-Notes-IDE)
 <br /><br />
+The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikulix-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))<br />
+
 Sikuli IDE is targeted at people who want to develop and run scripts using Sikuli features with one of the supported scripting languages (currently Python - more scripting languages to come).
 <br /><br />
+The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikulix-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))<br />
+
 For the use of Sikuli features in Java programs, other Java based languages or Java aware scripting languages currently not supported by Sikuli IDE you should use [Sikuli API](https://github.com/RaiMan/SikuliX-API) with other IDE's like Eclipse, NetBeans, ...
 
 Same goes for people who want to develop, run and debug scripts using SikuliX-IDE supported scripting languages in other IDE's like Eclipse, Netbeans, ...
@@ -17,8 +21,6 @@ This repo is **fully Maven**, so a fork of this repo can be directly used as pro
 It depends on [Sikuli API](https://github.com/RaiMan/SikuliX-API), [Sikuli Jython](https://github.com/RaiMan/SikuliX-Jython) and [Sikuli Basics](https://github.com/RaiMan/SikuliX-Basics).<br />
 [... click for more info about package production](https://github.com/RaiMan/SikuliX-IDE/wiki/Maven-support)
 <br /><br />
-The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikulix-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))<br />
-
 **Roadmap**
  - **2013 July 6:** open a developement branch for Sikuli IDE 1.1
   - better support for images and usage of Sikuli features
