@@ -7,12 +7,10 @@ The IDE to edit and run Sikuli scripts (supported scripting languages Python/Jyt
 <br /><br />
 **MANDATORY ;-)** [Have a look at major improvements and new features](https://github.com/RaiMan/SikuliX-IDE/wiki/Release-Notes-IDE)
 <br /><br />
-The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikulix-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))<br />
-
-Sikuli IDE is targeted at people who want to develop and run scripts using Sikuli features with one of the supported scripting languages (currently Python - more scripting languages to come).
+Sikuli IDE is targeted at people who want to develop and run scripts using Sikuli features with one of the supported scripting languages (currently Python - more scripting languages to come) in a lightweight IDE with special support for the visual approach provided by Sikuli.
 <br /><br />
-The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikulix-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))<br />
-
+The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikulix-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))
+<br /><br />
 For the use of Sikuli features in Java programs, other Java based languages or Java aware scripting languages currently not supported by Sikuli IDE you should use [Sikuli API](https://github.com/RaiMan/SikuliX-API) with other IDE's like Eclipse, NetBeans, ...
 
 Same goes for people who want to develop, run and debug scripts using SikuliX-IDE supported scripting languages in other IDE's like Eclipse, Netbeans, ...
