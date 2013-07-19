@@ -127,31 +127,35 @@ public class SikuliIDE extends JFrame {
 
     if (cmdLine.hasOption("h")) {
       cmdArgs.printHelp();
-      return;
+      System.exit(0);
     }
 
     if (cmdLine.hasOption("load")) {
 //TODO preload .sikuli scripts
       Debug.error("Option -load: not yet supported");
-      return;
+      System.exit(1);
     }
 
     if (cmdLine.hasOption("c")) {
       System.setProperty("sikuli.console", "false");
     }
 
-    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
-      Debug.setDebugLevel(cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname()));      
-    }
-    
     if (cmdLine.hasOption(CommandArgsEnum.LOGFILE.shortname())) {
       String val = cmdLine.getOptionValue(CommandArgsEnum.LOGFILE.longname());
-      Debug.setLogFile(val == null ? "" : val);
+      if (!Debug.setLogFile(val == null ? "" : val)) {
+        System.exit(1);
+      }
     }
     
     if (cmdLine.hasOption(CommandArgsEnum.USERLOGFILE.shortname())) {
       String val = cmdLine.getOptionValue(CommandArgsEnum.USERLOGFILE.longname());      
-      Debug.setUserLogFile(val == null ? "" : val);
+      if (!Debug.setUserLogFile(val == null ? "" : val)) {
+        System.exit(1);
+      }
+    }
+    
+    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
+      Debug.setDebugLevel(cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname()));      
     }
     
     if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname()) ||
