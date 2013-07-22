@@ -73,8 +73,8 @@ msgid "Save as..."
 msgstr "Sichern unter..."
 
 #: menuFileExport
-msgid "Export excutable..."
-msgstr "Speichern als ausführbar"
+msgid "Export packed source..."
+msgstr "Exportieren als gepackt..."
 
 #: menuFilePreferences
 msgid "Preferences..."
