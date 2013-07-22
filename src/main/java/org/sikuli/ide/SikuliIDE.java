@@ -94,6 +94,7 @@ public class SikuliIDE extends JFrame {
   private JCheckBoxMenuItem chkShowThumbs;
   //private UnitTestRunner _testRunner;
   private static CommandLine cmdLine;
+  private static String cmdValue;
   private static SikuliIDE _instance = null;
   private boolean _inited = false;
   private static boolean runMe = false;
@@ -106,7 +107,7 @@ public class SikuliIDE extends JFrame {
     try {
       return SikuliIDEI18N._I(key, args);
     } catch (Exception e) {
-      Debug.log(1, "[I18N] " + key);
+      Debug.log(3, "[I18N] " + key);
       return key;
     }
   }
@@ -125,6 +126,11 @@ public class SikuliIDE extends JFrame {
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(args);
+    
+    if (cmdLine == null || cmdLine.getOptions().length == 0) {
+      Debug.error("Did not find any valid option on command line!");
+      System.exit(1);
+    }
 
     if (cmdLine.hasOption("h")) {
       cmdArgs.printHelp();
@@ -142,21 +148,22 @@ public class SikuliIDE extends JFrame {
     }
 
     if (cmdLine.hasOption(CommandArgsEnum.LOGFILE.shortname())) {
-      String val = cmdLine.getOptionValue(CommandArgsEnum.LOGFILE.longname());
-      if (!Debug.setLogFile(val == null ? "" : val)) {
+      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.LOGFILE.longname());
+      if (!Debug.setLogFile(cmdValue == null ? "" : cmdValue)) {
         System.exit(1);
       }
     }
     
     if (cmdLine.hasOption(CommandArgsEnum.USERLOGFILE.shortname())) {
-      String val = cmdLine.getOptionValue(CommandArgsEnum.USERLOGFILE.longname());      
-      if (!Debug.setUserLogFile(val == null ? "" : val)) {
+      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.USERLOGFILE.longname());      
+      if (!Debug.setUserLogFile(cmdValue == null ? "" : cmdValue)) {
         System.exit(1);
       }
     }
     
     if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
-      Debug.setDebugLevel(cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname()));      
+      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
+      Debug.setDebugLevel(cmdValue == null ? "3" : cmdValue);      
     }
     
     if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname()) ||
@@ -166,9 +173,9 @@ public class SikuliIDE extends JFrame {
       SikuliScript.main(args);
     }
     
-    Settings.setArgs(cmdArgs.getUserArgs());
-    
+    Settings.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());   
     Settings.showJavaInfo();
+    Settings.printArgs();
 
 // we should open the IDE
     initNativeLayer();
@@ -1419,7 +1426,7 @@ public class SikuliIDE extends JFrame {
             "Checking for new version ... pls. wait! Checking for new version ... pls. wait!", -1);
       }
       PreferencesUser pref = PreferencesUser.getInstance();
-      Debug.log(2, "being asked to check update");
+      Debug.log(3, "being asked to check update");
       int whatUpdate = au.checkUpdate();
       if (f != null) {
         f.dispose();
@@ -2185,7 +2192,7 @@ public class SikuliIDE extends JFrame {
   }
 
   public void onQuickCapture(String arg) {
-    Debug.log(2, "QuickCapture");
+    Debug.log(3, "QuickCapture");
     _btnCapture.capture(0);
   }
 
@@ -2203,7 +2210,7 @@ public class SikuliIDE extends JFrame {
   }
 
   public void onStopRunning() {
-    Debug.log(2, "StopRunning");
+    Debug.log(3, "StopRunning");
     this.setVisible(true);
     _btnRun.stopRunning();
     _btnRunViz.stopRunning();
