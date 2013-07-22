@@ -19,18 +19,29 @@ public class SikuliIDEFileChooser {
 
 	static final int FILES = JFileChooser.FILES_ONLY;
 	static final int DIRS = JFileChooser.DIRECTORIES_ONLY;
+	static final int DIRSANDFILES = JFileChooser.FILES_AND_DIRECTORIES;
 	static final int SAVE = FileDialog.SAVE;
 	static final int LOAD = FileDialog.LOAD;
 	Frame _parent;
+  boolean accessingAsFile = false;
 
 	public SikuliIDEFileChooser(Frame parent) {
 		_parent = parent;
 	}
 
+	public SikuliIDEFileChooser(Frame parent, boolean accessingAsFile) {
+		_parent = parent;
+    this.accessingAsFile = accessingAsFile;
+	}
+
 	private File showFileChooser(String msg, int mode, GeneralFileFilter[] filters, int selectionMode) {
-		if (Settings.isMac() && Settings.hasMacBundles) {
-			if (Settings.isJava7() && selectionMode == DIRS) {
-				return showJFileChooser(msg, mode, filters, FILES);
+		if (Settings.isMac()) {
+			if ((Settings.isJava7() && selectionMode == DIRS) || ! accessingAsFile) {
+        if (accessingAsFile) {
+          return showJFileChooser(msg, mode, filters, FILES);
+        } else {
+          return showJFileChooser(msg, mode, filters, DIRS);
+        }
 			} else {
 //TODO Mac Java7: FileDialog not taking bundles as files
 				FileDialog fd = new FileDialog(_parent, msg, mode);
@@ -49,6 +60,7 @@ public class SikuliIDEFileChooser {
 
 	private File showJFileChooser(String msg, int mode, GeneralFileFilter[] filters, int selectionMode) {
 		JFileChooser fchooser = new JFileChooser();
+    fchooser.setDialogTitle(msg);
 		if (mode == FileDialog.SAVE) {
 			fchooser.setDialogType(JFileChooser.SAVE_DIALOG);
 		}
@@ -81,23 +93,35 @@ public class SikuliIDEFileChooser {
 	}
 
 	public File load() {
-		return showFileChooser("Open a Sikuli Source File", LOAD,
+    String type = "Sikuli source (*.sikuli)";
+    String title = "Open a Sikuli Source folder";
+    if (accessingAsFile) {
+      type = "Sikuli source file (*.sikuli)";
+      title = "Open a Sikuli Source file";
+    }
+		return showFileChooser(title, LOAD,
 						new GeneralFileFilter[]{
-							new GeneralFileFilter("sikuli", "Sikuli source files (*.sikuli)")
+							new GeneralFileFilter("sikuli", type)
 						}, DIRS);
 	}
 
 	public File save() {
-		return showFileChooser("Save a Sikuli Source File", SAVE,
+    String type = "Sikuli source (*.sikuli)";
+    String title = "Save a Sikuli Source folder";
+    if (accessingAsFile) {
+      type = "Sikuli source file (*.sikuli)";
+      title = "Save a Sikuli Source file";
+    }
+		return showFileChooser(title, SAVE,
 						new GeneralFileFilter[]{
-							new GeneralFileFilter("sikuli", "Sikuli source files (*.sikuli)")
+							new GeneralFileFilter("sikuli", type)
 						}, DIRS);
 	}
 
 	public File export() {
-		return showFileChooser("Export a Sikuli Executable File", SAVE,
+		return showFileChooser("Export a Sikuli packed source file", SAVE,
 						new GeneralFileFilter[]{
-							new GeneralFileFilter("skl", "Sikuli executable files (*.skl)")
+							new GeneralFileFilter("skl", "Sikuli packed src (*.skl)")
 						}, FILES);
 	}
 }

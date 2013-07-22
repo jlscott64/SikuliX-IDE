@@ -30,8 +30,8 @@ import org.sikuli.jython.PythonIndentation;
 import org.sikuli.ide.util.Utils;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.IResourceLoader;
 import org.sikuli.script.Location;
-import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.SikuliX;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
@@ -133,8 +133,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="file handling">
-  public String loadFile() throws IOException {
-    File file = new SikuliIDEFileChooser(SikuliIDE.getInstance()).load();
+  public String loadFile(boolean accessingAsFile) throws IOException {
+    File file = new SikuliIDEFileChooser(SikuliIDE.getInstance(), accessingAsFile).load();
     if (file == null) {
       return null;
     }
@@ -186,15 +186,15 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
   public String saveFile() throws IOException {
     if (_editingFile == null) {
-      return saveAsFile();
+      return saveAsFile(Settings.isMac());
     } else {
       writeSrcFile();
       return getCurrentShortFilename();
     }
   }
 
-  public String saveAsFile() throws IOException {
-    File file = new SikuliIDEFileChooser(SikuliIDE.getInstance()).save();
+  public String saveAsFile(boolean accessingAsFile) throws IOException {
+    File file = new SikuliIDEFileChooser(SikuliIDE.getInstance(), accessingAsFile).save();
     if (file == null) {
       return null;
     }
@@ -212,11 +212,34 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     } else {
       FileManager.mkdir(bundlePath);
     }
-    saveAsBundle(bundlePath, (SikuliIDE.getInstance().getCurrentFileTabTitle()));
-
+    try {
+      saveAsBundle(bundlePath, (SikuliIDE.getInstance().getCurrentFileTabTitle()));
+      if (Settings.isMac()) {
+        makeBundle(bundlePath, accessingAsFile);
+      }
+    } catch (IOException iOException) {
+    }
     return getCurrentShortFilename();
   }
-
+  
+  private void makeBundle(String path, boolean asFile) {
+    String isBundle = asFile ? "B" : "b";
+    IResourceLoader loader = FileManager.getNativeLoader("basic", new String[0]);
+    String[] cmd = new String[] {"#SetFile", "-a", isBundle, path};
+    loader.doSomethingSpecial("runcmd", cmd);
+    if (!cmd[0].isEmpty()) {
+      Debug.error("makeBundle: return: " + cmd[0]);
+    }
+    if (asFile) {
+      if (! FileManager.writeStringToFile("/Applications/SikuliX-IDE.app", 
+              (new File(path, ".LSOverride")).getAbsolutePath())) {
+        Debug.error("makeBundle: not possible: .LSOverride");
+      }
+    } else {
+      new File(path, ".LSOverride").delete();
+    }
+  }
+  
   private void saveAsBundle(String bundlePath, String current) throws IOException {
     bundlePath = Utils.slashify(bundlePath, true);
     if (_srcBundlePath != null) {
@@ -344,7 +367,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   public File getCurrentFile() {
     if (_editingFile == null && isDirty()) {
       try {
-        saveAsFile();
+        saveAsFile(Settings.isMac());
         return _editingFile;
       } catch (IOException e) {
         Debug.error(me + "getCurrentFile: Problem while trying to save %s\n%s", 

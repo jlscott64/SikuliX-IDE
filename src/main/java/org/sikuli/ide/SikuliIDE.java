@@ -100,6 +100,7 @@ public class SikuliIDE extends JFrame {
   private int restoredScripts = 0;
   private int alreadyOpenedTab = -1;
   private PreferencesUser prefs;
+  private boolean ACCESSING_AS_FOLDER = false;
 
   public static String _I(String key, Object... args) {
     try {
@@ -173,7 +174,8 @@ public class SikuliIDE extends JFrame {
     initNativeLayer();
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
+			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+    } catch (Exception e) {
 			Debug.error(me + "Problem loading UIManager!\nError: %s", e.getMessage());
 		}
 
@@ -651,6 +653,13 @@ public class SikuliIDE extends JFrame {
     _fileMenu.add(createMenuItem(_I("menuFileOpen"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, scMask),
             new FileAction(FileAction.OPEN)));
+    
+    if (Settings.isMac()) {
+    _fileMenu.add(createMenuItem("Open folder.sikuli ...",
+            null,
+//            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, scMask),
+            new FileAction(FileAction.OPEN_FOLDER)));      
+    }
 
     _fileMenu.add(createMenuItem(_I("menuFileSave"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, scMask),
@@ -660,6 +669,14 @@ public class SikuliIDE extends JFrame {
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
             InputEvent.SHIFT_MASK | scMask),
             new FileAction(FileAction.SAVE_AS)));
+
+    if (Settings.isMac()) {
+    _fileMenu.add(createMenuItem(_I("Save as folder.sikuli ..."),
+//            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
+//            InputEvent.SHIFT_MASK | scMask),
+            null,
+            new FileAction(FileAction.SAVE_AS_FOLDER)));      
+    }
 
      _fileMenu.add(createMenuItem(_I("menuFileExport"),
      KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E,
@@ -689,8 +706,10 @@ public class SikuliIDE extends JFrame {
     static final String ABOUT = "doAbout";
     static final String NEW = "doNew";
     static final String OPEN = "doLoad";
+    static final String OPEN_FOLDER = "doLoadFolder";
     static final String SAVE = "doSave";
     static final String SAVE_AS = "doSaveAs";
+    static final String SAVE_AS_FOLDER = "doSaveAsFolder";
     static final String EXPORT = "doExport";
     static final String CLOSE_TAB = "doCloseTab";
     static final String PREFERENCES = "doPreferences";
@@ -741,12 +760,17 @@ public class SikuliIDE extends JFrame {
     }
 
     public void doLoad(ActionEvent ae) {
+      boolean accessingAsFile = false;
+      if (Settings.isMac()) {
+        accessingAsFile = ! ACCESSING_AS_FOLDER;
+        ACCESSING_AS_FOLDER = false;
+      }
       alreadyOpenedTab = _mainPane.getSelectedIndex();
       String fname = null;
       try {
         doNew(ae);
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-        fname = codePane.loadFile();
+        fname = codePane.loadFile(accessingAsFile);
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         } else {
@@ -759,6 +783,12 @@ public class SikuliIDE extends JFrame {
       }
     }
 
+    public void doLoadFolder(ActionEvent ae) {
+      Debug.log(3, "IDE: doLoadFolder requested");
+      ACCESSING_AS_FOLDER = true;
+      doLoad(ae);
+    }
+    
     public void doSave(ActionEvent ae) {
       String fname = null;    
       try {
@@ -793,10 +823,15 @@ public class SikuliIDE extends JFrame {
     }
 
     public void doSaveAs(ActionEvent ae) {
+      boolean accessingAsFile = false;
+      if (Settings.isMac()) {
+        accessingAsFile = ! ACCESSING_AS_FOLDER;
+        ACCESSING_AS_FOLDER = false;
+      }
       String fname = null;
       try {
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-        fname = codePane.saveAsFile();
+        fname = codePane.saveAsFile(accessingAsFile);
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         }
@@ -806,6 +841,12 @@ public class SikuliIDE extends JFrame {
       }
     }
 
+    public void doSaveAsFolder(ActionEvent ae) {
+      Debug.log(3, "IDE: doSaveAsFolder requested");
+      ACCESSING_AS_FOLDER = true;
+      doSaveAs(ae);      
+    }
+    
     public void doExport(ActionEvent ae) {
       String fname = null;
       try {
