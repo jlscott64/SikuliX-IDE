@@ -215,7 +215,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     try {
       saveAsBundle(bundlePath, (SikuliIDE.getInstance().getCurrentFileTabTitle()));
       if (Settings.isMac()) {
-        makeBundle(bundlePath, accessingAsFile);
+        if (!Settings.handlesMacBundles) {
+          makeBundle(bundlePath, accessingAsFile);
+        }
       }
     } catch (IOException iOException) {
     }
