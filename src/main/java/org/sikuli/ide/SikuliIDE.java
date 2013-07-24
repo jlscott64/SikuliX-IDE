@@ -47,6 +47,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.basics.AutoUpdater;
 import org.sikuli.basics.CommandArgsEnum;
 import org.sikuli.basics.IResourceLoader;
+import org.sikuli.basics.MultiFrame;
 import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.SikuliX;
 
@@ -95,6 +96,7 @@ public class SikuliIDE extends JFrame {
   //private UnitTestRunner _testRunner;
   private static CommandLine cmdLine;
   private static String cmdValue;
+  private static String loadScript = null;
   private static SikuliIDE _instance = null;
   private boolean _inited = false;
   private static boolean runMe = false;
@@ -102,6 +104,8 @@ public class SikuliIDE extends JFrame {
   private int alreadyOpenedTab = -1;
   private PreferencesUser prefs;
   private boolean ACCESSING_AS_FOLDER = false;
+  private static JFrame splash;
+  private boolean firstRun = true;
 
   public static String _I(String key, Object... args) {
     try {
@@ -123,11 +127,19 @@ public class SikuliIDE extends JFrame {
 
 //TODO run only one windowed instance of IDE
   public static void main(String[] args) {
-
+    
+    String[] splashArgs = new String[ ] { 
+      "splash", "#", "#SikuliX-IDE-1.0.1", "", "#", "#... starting - pls. wait ..." };
+    for (String e : args) {
+      splashArgs[3] += e + " ";
+    }
+    splashArgs[3] = splashArgs[3].trim();
+    splash = new MultiFrame(splashArgs);
+    
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(args);
     
-    if (cmdLine == null || cmdLine.getOptions().length == 0) {
+    if (cmdLine == null) {
       Debug.error("Did not find any valid option on command line!");
       System.exit(1);
     }
@@ -135,12 +147,6 @@ public class SikuliIDE extends JFrame {
     if (cmdLine.hasOption("h")) {
       cmdArgs.printHelp();
       System.exit(0);
-    }
-
-    if (cmdLine.hasOption("load")) {
-//TODO preload .sikuli scripts
-      Debug.error("Option -load: not yet supported");
-      System.exit(1);
     }
 
     if (cmdLine.hasOption("c")) {
@@ -164,12 +170,26 @@ public class SikuliIDE extends JFrame {
     if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
       Debug.setDebugLevel(cmdValue == null ? "3" : cmdValue);      
+      if (Debug.getDebugLevel() > 2) {
+        Settings.LogTime = true;
+      }
     }
     
+    if (cmdLine.hasOption(CommandArgsEnum.LOAD.shortname())) {
+      loadScript = FileManager.slashify(cmdLine.getOptionValue(CommandArgsEnum.LOAD.longname()),false);    
+      Debug.log(3, "requested to load: " + loadScript);
+      if (loadScript.endsWith(".skl")) {
+        Debug.log(3,me + "Switching to SikuliScript to run " + loadScript);
+        splash.dispose();
+        SikuliScript.main(args);        
+      }
+    }
+
     if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname()) ||
         cmdLine.hasOption(CommandArgsEnum.TEST.shortname()) ||
         cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
       Debug.log(3,me + "Switching to SikuliScript with option -r, -t or -i");
+      splash.dispose();
       SikuliScript.main(args);
     }
     
@@ -293,7 +313,10 @@ public class SikuliIDE extends JFrame {
     }
 
     _inited = true;
-    getCurrentCodePane().requestFocus();
+    try {
+      getCurrentCodePane().requestFocus();
+    } catch (Exception e) {}
+    splash.dispose();
     setVisible(true);
     _mainSplitPane.setDividerLocation(0.6);
     return; // as breakpoint
@@ -379,11 +402,19 @@ public class SikuliIDE extends JFrame {
   private void restoreSession() {
     String session_str = PreferencesUser.getInstance().getIdeSession();
     if (session_str == null) {
-      return;
+      if (loadScript == null) {
+        return;
+      } else {
+        session_str = loadScript;
+        loadScript = null;
+      }
     }
+    if (loadScript != null) session_str += ";" + loadScript;
     String[] filenames = session_str.split(";");
     for (int i = 0; i < filenames.length; i++) {
-      Debug.log(5, "restore session: " + filenames[i]);
+      if (loadScript != null && filenames[i].startsWith(loadScript)
+              && i < filenames.length - 1) continue;
+      Debug.log(3, "restore session: " + filenames[i]);
       File f = new File(filenames[i]);
       if (f.exists()) {
         if (loadFile(filenames[i])) {
@@ -661,7 +692,7 @@ public class SikuliIDE extends JFrame {
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, scMask),
             new FileAction(FileAction.OPEN)));
     
-    if (Settings.isMac()) {
+    if (Settings.isMac() && !Settings.handlesMacBundles) {
     _fileMenu.add(createMenuItem("Open folder.sikuli ...",
             null,
 //            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, scMask),
@@ -677,7 +708,7 @@ public class SikuliIDE extends JFrame {
             InputEvent.SHIFT_MASK | scMask),
             new FileAction(FileAction.SAVE_AS)));
 
-    if (Settings.isMac()) {
+    if (Settings.isMac() && !Settings.handlesMacBundles) {
     _fileMenu.add(createMenuItem(_I("Save as folder.sikuli ..."),
 //            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
 //            InputEvent.SHIFT_MASK | scMask),
@@ -1746,6 +1777,10 @@ public class SikuliIDE extends JFrame {
       SikuliIDE ide = SikuliIDE.getInstance();
       if (ideIsRunningScript || !ide.doBeforeRun()) {
         return;
+      }
+      if (ide.firstRun) {
+        SikuliX.displaySplashFirstTime(new String[0]);
+        ide.firstRun = false;
       }
       ide.setIsRunningScript(true);
       _runningThread = new Thread() {
