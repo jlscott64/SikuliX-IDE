@@ -106,6 +106,7 @@ public class SikuliIDE extends JFrame {
   private boolean ACCESSING_AS_FOLDER = false;
   private static JFrame splash;
   private boolean firstRun = true;
+  private static long start;
 
   public static String _I(String key, Object... args) {
     try {
@@ -128,6 +129,7 @@ public class SikuliIDE extends JFrame {
 //TODO run only one windowed instance of IDE
   public static void main(String[] args) {
     
+    start = (new Date()).getTime();
     String[] splashArgs = new String[ ] { 
       "splash", "#", "#SikuliX-IDE-1.0.1", "", "#", "#... starting - pls. wait ..." };
     for (String e : args) {
@@ -317,6 +319,7 @@ public class SikuliIDE extends JFrame {
       getCurrentCodePane().requestFocus();
     } catch (Exception e) {}
     splash.dispose();
+    Debug.log(3, "Sikuli-IDE startup: " + ((new Date()).getTime() - start));
     setVisible(true);
     _mainSplitPane.setDividerLocation(0.6);
     return; // as breakpoint
