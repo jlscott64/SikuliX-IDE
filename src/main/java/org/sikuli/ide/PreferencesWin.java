@@ -490,6 +490,9 @@ public class PreferencesWin extends JFrame {
             _radTimestamp.isSelected() ? PreferencesUser.AUTO_NAMING_TIMESTAMP
             : _radOCR.isSelected() ? PreferencesUser.AUTO_NAMING_OCR
             : PreferencesUser.AUTO_NAMING_OFF);
+    if (pref.getAutoNamingMethod() != PreferencesUser.AUTO_NAMING_TIMESTAMP) {
+      pref.setPrefMoreTextOCR(true);
+    }
     if (old_cap_hkey != cap_hkey || old_cap_mod != cap_mod) {
       ide.removeCaptureHotkey(old_cap_hkey, old_cap_mod);
       ide.installCaptureHotkey(cap_hkey, cap_mod);
