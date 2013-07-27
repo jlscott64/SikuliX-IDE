@@ -131,7 +131,7 @@ public class SikuliIDE extends JFrame {
     
     start = (new Date()).getTime();
     String[] splashArgs = new String[ ] { 
-      "splash", "#", "#SikuliX-IDE-1.0.1", "", "#", "#... starting - pls. wait ..." };
+      "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - pls. wait ..." };
     for (String e : args) {
       splashArgs[3] += e + " ";
     }
@@ -171,10 +171,13 @@ public class SikuliIDE extends JFrame {
     
     if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
-      Debug.setDebugLevel(cmdValue == null ? "3" : cmdValue);      
-      if (Debug.getDebugLevel() > 2) {
+      if (cmdValue == null) {
+        Debug.setDebugLevel(3);
         Settings.LogTime = true;
-      }
+        System.setProperty("sikuli.console", "false");
+      } else {
+        Debug.setDebugLevel(cmdValue);
+      }      
     }
     
     if (cmdLine.hasOption(CommandArgsEnum.LOAD.shortname())) {
@@ -608,13 +611,13 @@ public class SikuliIDE extends JFrame {
 
   public void doAbout() {
     //TODO full featured About
-    String info = "You are running Sikuli 1.0.0\n"
-                + "Need help? -> start with Help Menu\n\n"
+    String info = "You are running " + Settings.SikuliVersionIDE
+                + "\n\nNeed help? -> start with Help Menu\n\n"
                 + "*** Have fun ;-)\n\n"
                 + "Tsung-Hsiang Chang aka vgod\n"
                 + "Tom Yeh\n"
                 + "Raimund Hocke aka RaiMan\n\n"
-                + "May 2013";
+                + Settings.versionMonth;
     JOptionPane.showMessageDialog(this, info,
             "Sikuli About", JOptionPane.PLAIN_MESSAGE);
   }
