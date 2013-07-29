@@ -173,6 +173,7 @@ public class SikuliIDE extends JFrame {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
       if (cmdValue == null) {
         Debug.setDebugLevel(3);
+        Debug.setLogFile("");
         Settings.LogTime = true;
         System.setProperty("sikuli.console", "false");
       } else {
