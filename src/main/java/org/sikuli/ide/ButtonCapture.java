@@ -145,7 +145,11 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
 						filename = Settings.getTimestamp();
 					}
 				} else {
-					filename = getFilenameFromUser(PatternPaneNaming.getFilenameFromImage(simg.getImage()));
+          String nameOCR = "";
+          try {
+            nameOCR = PatternPaneNaming.getFilenameFromImage(simg.getImage());
+          } catch (Exception e) {}
+					filename = getFilenameFromUser(nameOCR);
 				}
 
 				if (filename != null) {
