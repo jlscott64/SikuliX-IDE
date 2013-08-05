@@ -2219,7 +2219,7 @@ public class SikuliIDE extends JFrame {
   }
 
   public void installCaptureHotkey(int key, int mod) {
-    HotkeyManager.getInstance().addHotkey(1, new HotkeyListener() {
+    HotkeyManager.getInstance()._addHotkey(key, mod, new HotkeyListener() {
       @Override
       public void hotkeyPressed(HotkeyEvent e) {
         if (!SikuliIDE.getInstance().isRunningScript()) {
