@@ -1782,7 +1782,9 @@ public class SikuliIDE extends JFrame {
 
     public void runCurrentScript() {
       SikuliIDE ide = SikuliIDE.getInstance();
+      ide.setVisible(false);
       if (ideIsRunningScript || !ide.doBeforeRun()) {
+        ide.setVisible(true);
         return;
       }
       if (ide.firstRun) {
@@ -1805,7 +1807,7 @@ public class SikuliIDE extends JFrame {
                     new FileOutputStream(tmpFile),
                     "UTF8"));
             codePane.write(bw);
-            SikuliIDE.getInstance().setVisible(false);
+            //SikuliIDE.getInstance().setVisible(false);
             _console.clear();
             resetErrorMark();
             runPython(tmpFile);
