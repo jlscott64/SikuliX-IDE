@@ -129,6 +129,19 @@ public class SikuliIDE extends JFrame {
 //TODO run only one windowed instance of IDE
   public static void main(String[] args) {
     
+    if (System.getProperty("sikuli.FromCommandLine") == null) {
+      String[] userOptions = SikuliX.collectOptions("IDE", args);
+      if (userOptions == null) {
+        System.exit(0);
+      }
+      if (userOptions.length > 0) {
+        for (String e : userOptions) {
+          Debug.logx(3, "debug", "SikuliIDE: arg: " + e);
+        }   
+        args = userOptions;
+      }
+    }
+    
     start = (new Date()).getTime();
     String[] splashArgs = new String[ ] { 
       "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - pls. wait ..." };
@@ -139,7 +152,7 @@ public class SikuliIDE extends JFrame {
     splash = new MultiFrame(splashArgs);
     
     CommandArgs cmdArgs = new CommandArgs("IDE");
-    cmdLine = cmdArgs.getCommandLine(args);
+    cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
     
     if (cmdLine == null) {
       Debug.error("Did not find any valid option on command line!");
