@@ -12,7 +12,7 @@ The IDE to edit and run Sikuli scripts (supported scripting languages Python/Jyt
 <br /><br />
 Sikuli IDE is targeted at people who want to develop and run scripts using Sikuli features with one of the supported scripting languages (currently Python - more scripting languages to come) in a lightweight IDE with special support for the visual approach provided by Sikuli.
 <br /><br />
-The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikulix-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))
+The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikuli-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))
 <br /><br />
 For the use of Sikuli features in Java programs, other Java based languages or Java aware scripting languages currently not supported by Sikuli IDE you should use [Sikuli API](https://github.com/RaiMan/SikuliX-API) with other IDE's like Eclipse, NetBeans, ...
 
@@ -23,23 +23,23 @@ It depends on [Sikuli API](https://github.com/RaiMan/SikuliX-API), [Sikuli Jytho
 [... click for more info about package production](https://github.com/RaiMan/SikuliX-IDE/wiki/Maven-support)
 <br /><br />
 **Roadmap**
- - **2013 July 6:** open a developement branch for Sikuli IDE 1.1
+ - **2013 August 12:** service update Sikuli IDE 1.0.1
+  - bug fixes and some enhancements
+<br />
+<br />
+ - **2013 August:** open a developement branch for Sikuli IDE 1.1
   - better support for images and usage of Sikuli features
   - implement more standard IDE features
   - support JRuby as scripting language
 <br />
 <br />
- - **2013 Juli 29:** service update Sikuli IDE 1.0.1
-  - bug fixes and some enhancements
-<br />
-<br />
- - **2013 October 31:** release of Sikuli IDE 1.1
+ - **2013 November 29:** release of Sikuli IDE 1.1
   - open a developement branch for Sikuli IDE 1.2
   - more scripting languages
   - new features tbd.
 <br />
 <br />
- - **2014:** new versions in April and October
+ - **2014:** new versions in May and November
 
 **History**
  - this is based on the developement at MIT (Tsung-Hsiang Chang (Sean aka vgod) and Tom Yeh) which was discontinued end 2011 (https://github.com/sikuli/sikuli) with a latest version called Sikuli X-1.0r930.
