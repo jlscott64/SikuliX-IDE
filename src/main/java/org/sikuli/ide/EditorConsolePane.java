@@ -111,6 +111,7 @@ public class EditorConsolePane extends JPanel implements Runnable {
   private String htmlize(String msg) {
     StringBuilder sb = new StringBuilder();
     Pattern patMsgCat = Pattern.compile("\\[(.+?)\\].*");
+    msg = msg.replace("&", "&amp;").replace("<", "&lt;").replace(">","&gt;");
     for (String line : msg.split(lineSep)) {
       Matcher m = patMsgCat.matcher(line);
       String cls = "normal";
@@ -135,7 +136,9 @@ public class EditorConsolePane extends JPanel implements Runnable {
           if (pin[i].available() != 0) {
             String input = this.readLine(pin[i]);
             appendMsg(htmlize(input));
-            textArea.setCaretPosition(textArea.getDocument().getLength() - 1);
+            if (textArea.getDocument().getLength() > 0) {
+              textArea.setCaretPosition(textArea.getDocument().getLength() - 1);
+            }
           }
           if (quit) {
             return;
