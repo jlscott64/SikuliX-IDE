@@ -1,4 +1,4 @@
-Sikuli IDE 1.0.1<br /> <br />Service Update per August 12th, 2013
+Sikuli IDE 1.0.1<br />Service Update per August 12th, 2013
 ===========
 <hr /><hr />
 [**Preview for Mac and Windows available**](http://www.sikuli.org/download.html)
