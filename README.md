@@ -1,14 +1,11 @@
 Sikuli IDE 1.0.1<br />Service Update per August 12th, 2013
 ===========
+**MANDATORY ;-)** [Have a look at major improvements and new features](https://github.com/RaiMan/SikuliX-IDE/wiki/Release-Notes-IDE)
 <hr /><hr />
 [**Preview for Mac and Windows available**](http://www.sikuli.org/download.html)
 <hr /><hr />
 
-**Download of current versions (1.0.0)** visit the official [**download page on Launchpad**](https://launchpad.net/sikuli/+download).<br />
-
-The IDE to edit and run Sikuli scripts (supported scripting languages Python/Jython).
-<br /><br />
-**MANDATORY ;-)** [Have a look at major improvements and new features](https://github.com/RaiMan/SikuliX-IDE/wiki/Release-Notes-IDE)
+**Download of current versions (1.0.0)** visit the official [**download page on Launchpad**](https://launchpad.net/sikuli/+download).
 <br /><br />
 Sikuli IDE is targeted at people who want to develop and run scripts using Sikuli features with one of the supported scripting languages (currently Python - more scripting languages to come) in a lightweight IDE with special support for the visual approach provided by Sikuli.
 <br /><br />
