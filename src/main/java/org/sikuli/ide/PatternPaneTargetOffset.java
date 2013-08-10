@@ -54,7 +54,7 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Finder f = new Finder(_simg, Region.create(0, 0, 0, 0));
+				Finder f = new Finder(_simg, Region.create(0, 0, 1, 1));
 				try {
 					f.find(patFilename);
 					if (f.hasNext()) {

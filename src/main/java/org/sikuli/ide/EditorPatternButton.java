@@ -292,7 +292,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
   }
 
 	public boolean setTargetOffset(Location offset) {
-		Debug.log(2, "setTargetOffset: " + offset);
+		Debug.log(3, "setTargetOffset: " + offset.toStringShort());
 		if (!_offset.equals(offset)) {
 			_offset = offset;
       setButtonText();
