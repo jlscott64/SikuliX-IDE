@@ -15,7 +15,7 @@ Same goes for people who want to develop, run and debug scripts using SikuliX-ID
 <br /><br />
 This repo is **fully Maven**, so a fork of this repo can be directly used as project in NetBeans/Eclipse/... or with mvn on commandline. <br />
 It depends on [Sikuli API](https://github.com/RaiMan/SikuliX-API), [Sikuli Jython](https://github.com/RaiMan/SikuliX-Jython) and [Sikuli Basics](https://github.com/RaiMan/SikuliX-Basics).<br />
-[... click for more info about package production](https://github.com/RaiMan/SikuliX-IDE/wiki/Maven-support)
+[A more detailed info on usage, contents and production of standalone runnable packages](https://github.com/RaiMan/SikuliX-API/wiki/Maven-support)
 <br /><br />
 **Roadmap**
  - **2013 August 12:** service update Sikuli IDE 1.0.1
