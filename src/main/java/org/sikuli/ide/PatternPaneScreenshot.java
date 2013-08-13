@@ -65,7 +65,7 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
 		addComponentListener(this);
 		_simg = simg;
 		_screen = simg.getImage();
-		MAX_NUM_MATCHING = (int) Vision.getParameter("FindAllMaxReturn");
+		//TODO Necessary? MAX_NUM_MATCHING = (int) Vision.getParameter("FindAllMaxReturn");
 		autoResize();
 		_loading = new LoadingSpinner();
 	}
@@ -93,7 +93,8 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
 		c.gridwidth = 3;
 		pane.add(sldSimilar, c);
 
-		c.fill = 0;
+//TODO num Matches needed?
+/*		c.fill = 0;
 		c.gridy = 1;
 		c.gridwidth = 1;
 		pane.add(lblPreNumMatches, c);
@@ -105,6 +106,7 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
 		pane.add(txtNumMatches, c);
 
 		txtNumMatches.addChangeListener(this);
+*/
 
 		return pane;
 	}
