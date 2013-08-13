@@ -2,6 +2,8 @@ Sikuli IDE 1.0.1<br />Service Update per August 12th, 2013
 ===========
 **MANDATORY ;-) --->>>** [Read the Release Notes carefully to avoid problems from the beginning](https://github.com/RaiMan/SikuliX-IDE/wiki/Release-Notes-IDE)
 
+[to download setup-sikuli.jar version 1.0.1 start here](http://www.sikuli.org/download.html)
+
 Sikuli IDE is targeted at people who want to develop and run scripts using Sikuli features with one of the supported scripting languages (currently Python - more scripting languages to come) in a lightweight IDE with special support for the visual approach provided by Sikuli.
 <br /><br />
 The downloadable packages of Sikuli IDE contain everything needed for all purposes (but it should not be used with standalone Jython to avoid conflicts with the bundled Jython - use sikuli-java.jar instead from [Sikuli API](https://github.com/RaiMan/SikuliX-API))
