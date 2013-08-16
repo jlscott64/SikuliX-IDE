@@ -48,6 +48,7 @@ import org.sikuli.basics.AutoUpdater;
 import org.sikuli.basics.CommandArgsEnum;
 import org.sikuli.basics.IResourceLoader;
 import org.sikuli.basics.MultiFrame;
+import org.sikuli.basics.RunSetup;
 import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.SikuliX;
 
@@ -631,7 +632,8 @@ public class SikuliIDE extends JFrame {
                 + "Tsung-Hsiang Chang aka vgod\n"
                 + "Tom Yeh\n"
                 + "Raimund Hocke aka RaiMan\n\n"
-                + Settings.versionMonth;
+                + Settings.versionMonth 
+                + "\n\nBuild: " + RunSetup.timestampBuilt;
     JOptionPane.showMessageDialog(this, info,
             "Sikuli About", JOptionPane.PLAIN_MESSAGE);
   }
