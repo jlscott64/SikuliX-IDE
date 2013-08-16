@@ -138,7 +138,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (file == null) {
       return null;
     }
-    String fname = Utils.slashify(file.getAbsolutePath(), false);
+    String fname = FileManager.slashify(file.getAbsolutePath(), false);
     SikuliIDE ide = SikuliIDE.getInstance();
     int i = ide.isAlreadyOpen(fname);
     if (i > -1) {
@@ -150,38 +150,14 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   }
 
   public void loadFile(String filename) throws IOException {
-    if (filename.endsWith("/")) {
-      filename = filename.substring(0, filename.length() - 1);
-    }
+    filename = FileManager.slashify(filename, false);
     setSrcBundle(filename + "/");
-    _editingFile = findSourceFile(filename);
+    File script = new File(filename);
+    _editingFile = FileManager.getScriptFile(script, null, new String[0]);
     this.read(new BufferedReader(new InputStreamReader(
             new FileInputStream(_editingFile), "UTF8")), null);
     updateDocumentListeners();
     setDirty(false);
-  }
-
-  private File findSourceFile(String sikuli_dir) {
-    if (sikuli_dir.endsWith(".sikuli")
-            || sikuli_dir.endsWith(".sikuli" + "/")) {
-      File dir = new File(sikuli_dir);
-      File[] pys = dir.listFiles(new GeneralFileFilter("py", "Python Source"));
-      if (pys.length > 1) {
-        String sikuli_name = dir.getName();
-        sikuli_name = sikuli_name.substring(0, sikuli_name.lastIndexOf('.'));
-        for (File f : pys) {
-          String py_name = f.getName();
-          py_name = py_name.substring(0, py_name.lastIndexOf('.'));
-          if (py_name.equals(sikuli_name)) {
-            return f;
-          }
-        }
-      }
-      if (pys.length >= 1) {
-        return pys[0];
-      }
-    }
-    return new File(sikuli_dir);
   }
 
   public String saveFile() throws IOException {
@@ -198,7 +174,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (file == null) {
       return null;
     }
-    String bundlePath = file.getAbsolutePath();
+    String bundlePath = FileManager.slashify(file.getAbsolutePath(), false);
     if (!file.getAbsolutePath().endsWith(".sikuli")) {
       bundlePath += ".sikuli";
     }
@@ -243,7 +219,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   }
   
   private void saveAsBundle(String bundlePath, String current) throws IOException {
-    bundlePath = Utils.slashify(bundlePath, true);
+//TODO allow other file types
+    bundlePath = FileManager.slashify(bundlePath, true);
     if (_srcBundlePath != null) {
       FileManager.xcopy(_srcBundlePath, bundlePath, current);
     }
@@ -259,14 +236,13 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   }
 
   private File createSourceFile(String bundlePath, String ext) {
-    if (bundlePath.endsWith(".sikuli")
-            || bundlePath.endsWith(".sikuli/")) {
-      File dir = new File(bundlePath);
-      String name = dir.getName();
+    if (ext != null) {
+      String name = new File(bundlePath).getName();
       name = name.substring(0, name.lastIndexOf("."));
       return new File(bundlePath, name + ext);
+    } else {
+      return new File(bundlePath);
     }
-    return new File(bundlePath);
   }
 
   private void writeSrcFile() throws IOException {
@@ -340,7 +316,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   public String getSrcBundle() {
     if (_srcBundlePath == null) {
       File tmp = FileManager.createTempDir();
-      setSrcBundle(Utils.slashify(tmp.getAbsolutePath(), true));
+      setSrcBundle(FileManager.slashify(tmp.getAbsolutePath(), true));
       _srcBundleTemp = true;
     }
     return _srcBundlePath;
