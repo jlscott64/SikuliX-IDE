@@ -325,12 +325,14 @@ public class SikuliIDE extends JFrame {
     initWindowListener();
     initTooltip();
     restoreSession();
+//TODO restore selected tab
 
     autoCheckUpdate();
 
     if (_mainPane.getTabCount() == 0) {
       (new FileAction()).doNew(null);
     }
+    _mainPane.setSelectedIndex(0);
 
     _inited = true;
     try {
@@ -435,6 +437,9 @@ public class SikuliIDE extends JFrame {
     for (int i = 0; i < filenames.length; i++) {
       if (loadScript != null && filenames[i].startsWith(loadScript)
               && i < filenames.length - 1) continue;
+      if (filenames[i].isEmpty()) {
+        continue;
+      }
       Debug.log(3, "restore session: " + filenames[i]);
       File f = new File(filenames[i]);
       if (f.exists()) {
