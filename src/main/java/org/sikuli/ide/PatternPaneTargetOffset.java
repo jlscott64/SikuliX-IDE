@@ -58,12 +58,14 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 			@Override
 			public void run() {
         Region screenUnion = Region.create(0, 0, 1, 1);
-        screenUnion.getScreen().initAsScreenUnion();
 				Finder f = new Finder(_simg, screenUnion);
 				try {
 					f.find(patFilename);
 					if (f.hasNext()) {
+//TODO rewrite completely for ScreenUnion
+            screenUnion.getScreen().setAsScreenUnion();
 						_match = f.next();
+            screenUnion.getScreen().setAsScreen();
 						if (initOffset != null) {
 							setTarget(initOffset.x, initOffset.y);
 						} else {
