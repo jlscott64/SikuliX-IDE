@@ -19,7 +19,7 @@ import org.sikuli.basics.FileManager;
 
 class EditorPatternButton extends JButton implements ActionListener, Serializable, MouseListener {
 
-	static final int DEFAULT_NUM_MATCHES = 10;
+	public static final int DEFAULT_NUM_MATCHES = 50;
 	static final float DEFAULT_SIMILARITY = 0.7f;
 	private String _imgFilename, _thumbFname, _imgFilenameSaved;
   private JLabel patternImageIcon = null;
@@ -331,7 +331,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
       }
     }
     if (_offset != null && (_offset.x != 0 || _offset.y != 0)) {
-      strOffset = _offset.toString();
+      strOffset = _offset.toStringShort();
     }
     if (strOffset == null && strSim == null) {
       return;

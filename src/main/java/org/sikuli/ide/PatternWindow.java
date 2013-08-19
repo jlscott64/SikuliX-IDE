@@ -11,7 +11,6 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import org.sikuli.script.Location;
-import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.ScreenUnion;
 import org.sikuli.basics.Debug;
@@ -85,6 +84,76 @@ public class PatternWindow extends JFrame {
 		setVisible(true);
 	}
 
+	void takeScreenshot() {
+		SikuliIDE ide = SikuliIDE.getInstance();
+		ide.setVisible(false);
+		try {
+			Thread.sleep(500);
+		} catch (Exception e) {
+		}
+		_simg = (new ScreenUnion()).getScreen().capture();
+		ide.setVisible(true);
+	}
+
+	private JPanel createPreviewPanel() {
+		JPanel p = new JPanel();
+		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+		_screenshot = new PatternPaneScreenshot(_simg);
+    createMarginBox(p, _screenshot);
+		p.add(Box.createVerticalStrut(5));
+		p.add(_screenshot.createControls());
+		p.add(Box.createVerticalStrut(5));
+		p.add(msgApplied[tabSequence]);
+		p.doLayout();
+		return p;
+	}
+
+	private JPanel createTargetPanel() {
+		JPanel p = new JPanel();
+		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+		_tarOffsetPane = new PatternPaneTargetOffset(
+						_simg, _imgBtn.getFilename(), _imgBtn.getTargetOffset());
+		createMarginBox(p, _tarOffsetPane);
+		p.add(Box.createVerticalStrut(5));
+		p.add(_tarOffsetPane.createControls());
+		p.add(Box.createVerticalStrut(5));
+		p.add(msgApplied[tabSequence]);
+		p.doLayout();
+		return p;
+	}
+
+	private JComponent createButtons() {
+		JPanel pane = new JPanel(new GridBagLayout());
+		JButton btnOK = new JButton(_I("ok"));
+		btnOK.addActionListener(new ActionOK(this));
+		JButton btnApply = new JButton(_I("apply"));
+		btnApply.addActionListener(new ActionApply(this));
+		JButton btnCancel = new JButton(_I("cancel"));
+		btnCancel.addActionListener(new ActionCancel(this));
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = 3;
+		c.gridx = 0;
+		c.insets = new Insets(5, 0, 10, 0);
+		c.anchor = GridBagConstraints.LAST_LINE_END;
+		pane.add(btnOK, c);
+		c.gridx = 1;
+		pane.add(btnApply, c);
+		c.gridx = 2;
+		pane.add(btnCancel, c);
+		return pane;
+	}
+
+	private void createMarginBox(Container c, Component comp) {
+		c.add(Box.createVerticalStrut(10));
+		Box lrMargins = Box.createHorizontalBox();
+		lrMargins.add(Box.createHorizontalStrut(10));
+		lrMargins.add(comp);
+		lrMargins.add(Box.createHorizontalStrut(10));
+		c.add(lrMargins);
+		c.add(Box.createVerticalStrut(10));
+	}
+
+
 	public void setMessageApplied(int i, boolean flag) {
 		if (flag) {
 			msgApplied[i].setText("Changes have been applied");
@@ -100,88 +169,6 @@ public class PatternWindow extends JFrame {
 
 	public JTabbedPane getTabbedPane() {
 		return tabPane;
-	}
-
-	void takeScreenshot() {
-		SikuliIDE ide = SikuliIDE.getInstance();
-		ide.setVisible(false);
-		try {
-			Thread.sleep(500);
-		} catch (Exception e) {
-		}
-		Region match_region = new ScreenUnion();
-		_simg = match_region.getScreen().capture();
-		ide.setVisible(true);
-	}
-
-	private JPanel createPreviewPanel() {
-		JPanel p = new JPanel();
-		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-
-		createScreenshots(p);
-		p.add(Box.createVerticalStrut(5));
-		p.add(_screenshot.createControls());
-		p.add(Box.createVerticalStrut(5));
-		p.add(msgApplied[tabSequence]);
-		p.doLayout();
-		return p;
-	}
-
-	private void createScreenshots(Container c) {
-		_screenshot = new PatternPaneScreenshot(_simg);
-		//_screenshot.addObserver(this);
-		createMarginBox(c, _screenshot);
-	}
-
-	private void createMarginBox(Container c, Component comp) {
-		c.add(Box.createVerticalStrut(10));
-		Box lrMargins = Box.createHorizontalBox();
-		lrMargins.add(Box.createHorizontalStrut(10));
-		lrMargins.add(comp);
-		lrMargins.add(Box.createHorizontalStrut(10));
-		c.add(lrMargins);
-		c.add(Box.createVerticalStrut(10));
-	}
-
-	private JPanel createTargetPanel() {
-		JPanel p = new JPanel();
-		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-
-		_tarOffsetPane = new PatternPaneTargetOffset(
-						_simg, _imgBtn.getFilename(), _imgBtn.getTargetOffset());
-		//p.addObserver(this);
-		createMarginBox(p, _tarOffsetPane);
-		p.add(Box.createVerticalStrut(5));
-		p.add(_tarOffsetPane.createControls());
-		p.add(Box.createVerticalStrut(5));
-		p.add(msgApplied[tabSequence]);
-		p.doLayout();
-		return p;
-	}
-
-	private JComponent createButtons() {
-		JPanel pane = new JPanel(new GridBagLayout());
-
-		JButton btnOK = new JButton(_I("ok"));
-		btnOK.addActionListener(new ActionOK(this));
-		JButton btnApply = new JButton(_I("apply"));
-		btnApply.addActionListener(new ActionApply(this));
-		JButton btnCancel = new JButton(_I("cancel"));
-		btnCancel.addActionListener(new ActionCancel(this));
-
-		GridBagConstraints c = new GridBagConstraints();
-
-		c.gridy = 3;
-		c.gridx = 0;
-		c.insets = new Insets(5, 0, 10, 0);
-		c.anchor = GridBagConstraints.LAST_LINE_END;
-		pane.add(btnOK, c);
-		c.gridx = 1;
-		pane.add(btnApply, c);
-		c.gridx = 2;
-		pane.add(btnCancel, c);
-
-		return pane;
 	}
 
 	public void setTargetOffset(Location offset) {

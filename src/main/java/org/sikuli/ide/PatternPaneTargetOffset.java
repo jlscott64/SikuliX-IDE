@@ -20,11 +20,14 @@ import org.sikuli.script.Location;
 import org.sikuli.script.Match;
 import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
+import org.sikuli.script.ScreenUnion;
 
 class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWheelListener, ChangeListener {
 
+  final static String me = "PatternPaneTargetOffset: ";
 	final static int DEFAULT_H = 300;
 	final static float DEFAULT_PATTERN_RATIO = 0.4f;
+	private static Color COLOR_BG_LINE = new Color(210, 210, 210, 130);
 	ScreenImage _simg;
 	BufferedImage _img;
 	Match _match = null;
@@ -54,7 +57,9 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Finder f = new Finder(_simg, Region.create(0, 0, 1, 1));
+        Region screenUnion = Region.create(0, 0, 1, 1);
+        screenUnion.getScreen().initAsScreenUnion();
+				Finder f = new Finder(_simg, screenUnion);
 				try {
 					f.find(patFilename);
 					if (f.hasNext()) {
@@ -67,7 +72,7 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 					}
 					_img = ImageIO.read(new File(patFilename));
 				} catch (IOException e) {
-					Debug.error("Can't load " + patFilename);
+					Debug.error(me + "Can't load " + patFilename);
 				}
 				synchronized (PatternPaneTargetOffset.this) {
 					_finding = false;
@@ -82,16 +87,8 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 		return SikuliIDEI18N._I(key, args);
 	}
 
-	private void zoomToMatch() {
-		_viewW = (int) (_match.w / _ratio);
-		_zoomRatio = getWidth() / (float) _viewW;
-		_viewH = (int) (getHeight() / _zoomRatio);
-		_viewX = _match.x + _match.w / 2 - _viewW / 2;
-		_viewY = _match.y + _match.h / 2 - _viewH / 2;
-	}
-
 	public void setTarget(int dx, int dy) {
-		Debug.log(3, "new target: " + dx + "," + dy);
+		Debug.log(3, me + "new target: " + dx + "," + dy);
 		if (_match != null) {
 			Location center = _match.getCenter();
 			_tar.x = center.x + dx;
@@ -112,7 +109,7 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 	@Override
 	public void mousePressed(MouseEvent me) {
 		Location tar = convertViewToScreen(me.getPoint());
-		Debug.log(4, "click: " + me.getPoint() + " -> " + tar);
+		Debug.log(4, "click: " + me.getPoint() + " -> " + tar.toStringShort());
 		if (_match != null) {
 			Location center = _match.getCenter();
 			setTarget(tar.x - center.x, tar.y - center.y);
@@ -154,43 +151,34 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 	@Override
 	public void mouseExited(MouseEvent me) {
 	}
-	private static Color COLOR_BG_LINE = new Color(210, 210, 210, 130);
 
-	void paintRulers(Graphics g2d) {
-		int step = (int) (10 * _zoomRatio);
-		if (step < 2) {
-			step = 2;
-		}
-		int h = getHeight(), w = getWidth();
-		if (h % 2 == 1) {
-			h--;
-		}
-		if (w % 2 == 1) {
-			w--;
-		}
-		g2d.setColor(COLOR_BG_LINE);
-		for (int x = w / 2; x >= 0; x -= step) {
-			g2d.drawLine(x, 0, x, h);
-			g2d.drawLine(w - x, 0, w - x, h);
-		}
-		for (int y = h / 2; y >= 0; y -= step) {
-			g2d.drawLine(0, y, w, y);
-			g2d.drawLine(0, h - y, w, h - y);
+	@Override
+	public void paintComponent(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+		if (getWidth() > 0 && getHeight() > 0) {
+			if (_match != null) {
+				zoomToMatch();
+				paintSubScreen(g2d);
+				paintMatch(g2d);
+			} else {
+				paintPatternOnly(g2d);
+			}
+			paintRulers(g2d);
+			paintTarget(g2d);
+			synchronized (this) {
+				if (_finding) {
+					paintLoading(g2d);
+				}
+			}
 		}
 	}
 
-	void paintBackground(Graphics g2d) {
-		g2d.setColor(Color.WHITE);
-		g2d.fillRect(0, 0, getWidth(), getHeight());
-	}
-
-	void paintPatternOnly(Graphics g2d) {
-		int patW = (int) (getWidth() * _ratio);
-		_zoomRatio = patW / (float) _img.getWidth();
-		int patH = (int) (_img.getHeight() * _zoomRatio);
-		int patX = getWidth() / 2 - patW / 2, patY = getHeight() / 2 - patH / 2;
-		paintBackground(g2d);
-		g2d.drawImage(_img, patX, patY, patW, patH, null);
+	private void zoomToMatch() {
+		_viewW = (int) (_match.w / _ratio);
+		_zoomRatio = getWidth() / (float) _viewW;
+		_viewH = (int) (getHeight() / _zoomRatio);
+		_viewX = _match.x + _match.w / 2 - _viewW / 2;
+		_viewY = _match.y + _match.h / 2 - _viewH / 2;
 	}
 
 	void paintSubScreen(Graphics g2d) {
@@ -215,26 +203,28 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 		g2d.drawImage(clip, destX, destY, destW, destH, null);
 	}
 
-	@Override
-	public void paintComponent(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
-		if (getWidth() > 0 && getHeight() > 0) {
-			if (_match != null) {
-				zoomToMatch();
-				paintSubScreen(g2d);
-				paintMatch(g2d);
-			} else {
-				paintPatternOnly(g2d);
-			}
-			paintRulers(g2d);
-			paintTarget(g2d);
-			synchronized (this) {
-				if (_finding) {
-					paintLoading(g2d);
-				}
-			}
+	void paintMatch(Graphics2D g2d) {
+		int w = (int) (getWidth() * _ratio),
+						h = (int) ((float) w / _img.getWidth() * _img.getHeight());
+		int x = getWidth() / 2 - w / 2, y = getHeight() / 2 - h / 2;
+		Color c = PatternSimilaritySlider.getScoreColor(_match.getScore());
+		g2d.setColor(c);
+		g2d.fillRect(x, y, w, h);
+		g2d.drawRect(x, y, w - 1, h - 1);
+	}
 
-		}
+	void paintBackground(Graphics g2d) {
+		g2d.setColor(Color.WHITE);
+		g2d.fillRect(0, 0, getWidth(), getHeight());
+	}
+
+	void paintPatternOnly(Graphics g2d) {
+		int patW = (int) (getWidth() * _ratio);
+		_zoomRatio = patW / (float) _img.getWidth();
+		int patH = (int) (_img.getHeight() * _zoomRatio);
+		int patX = getWidth() / 2 - patW / 2, patY = getHeight() / 2 - patH / 2;
+		paintBackground(g2d);
+		g2d.drawImage(_img, patX, patY, patW, patH, null);
 	}
 
 	void paintLoading(Graphics2D g2d) {
@@ -244,6 +234,40 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 		BufferedImage spinner = _loading.getFrame();
 		g2d.drawImage(spinner, null, w / 2 - spinner.getWidth() / 2, h / 2 - spinner.getHeight() / 2);
 		repaint();
+	}
+
+	void paintTarget(Graphics2D g2d) {
+		final int CROSS_LEN = 20 / 2;
+		Point l = convertScreenToView(_tar);
+		g2d.setColor(Color.BLACK);
+		g2d.drawLine(l.x - CROSS_LEN, l.y + 1, l.x + CROSS_LEN, l.y + 1);
+		g2d.drawLine(l.x + 1, l.y - CROSS_LEN, l.x + 1, l.y + CROSS_LEN);
+		g2d.setColor(Color.WHITE);
+		g2d.drawLine(l.x - CROSS_LEN, l.y, l.x + CROSS_LEN, l.y);
+		g2d.drawLine(l.x, l.y - CROSS_LEN, l.x, l.y + CROSS_LEN);
+	}
+
+	void paintRulers(Graphics g2d) {
+		int step = (int) (10 * _zoomRatio);
+		if (step < 2) {
+			step = 2;
+		}
+		int h = getHeight(), w = getWidth();
+		if (h % 2 == 1) {
+			h--;
+		}
+		if (w % 2 == 1) {
+			w--;
+		}
+		g2d.setColor(COLOR_BG_LINE);
+		for (int x = w / 2; x >= 0; x -= step) {
+			g2d.drawLine(x, 0, x, h);
+			g2d.drawLine(w - x, 0, w - x, h);
+		}
+		for (int y = h / 2; y >= 0; y -= step) {
+			g2d.drawLine(0, y, w, y);
+			g2d.drawLine(0, h - y, w, h - y);
+		}
 	}
 
 	Location convertViewToScreen(Point p) {
@@ -268,27 +292,6 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 			ret.y = (int) (getHeight() / 2 + loc.y * _zoomRatio);
 		}
 		return ret;
-	}
-
-	void paintTarget(Graphics2D g2d) {
-		final int CROSS_LEN = 20 / 2;
-		Point l = convertScreenToView(_tar);
-		g2d.setColor(Color.BLACK);
-		g2d.drawLine(l.x - CROSS_LEN, l.y + 1, l.x + CROSS_LEN, l.y + 1);
-		g2d.drawLine(l.x + 1, l.y - CROSS_LEN, l.x + 1, l.y + CROSS_LEN);
-		g2d.setColor(Color.WHITE);
-		g2d.drawLine(l.x - CROSS_LEN, l.y, l.x + CROSS_LEN, l.y);
-		g2d.drawLine(l.x, l.y - CROSS_LEN, l.x, l.y + CROSS_LEN);
-	}
-
-	void paintMatch(Graphics2D g2d) {
-		int w = (int) (getWidth() * _ratio),
-						h = (int) ((float) w / _img.getWidth() * _img.getHeight());
-		int x = getWidth() / 2 - w / 2, y = getHeight() / 2 - h / 2;
-		Color c = PatternSimilaritySlider.getScoreColor(_match.getScore());
-		g2d.setColor(c);
-		g2d.fillRect(x, y, w, h);
-		g2d.drawRect(x, y, w - 1, h - 1);
 	}
 
 	public JComponent createControls() {
