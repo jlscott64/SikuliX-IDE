@@ -37,7 +37,6 @@ import org.sikuli.basics.HotkeyManager;
 import org.sikuli.script.Location;
 import org.sikuli.script.OverlayCapturePrompt;
 import org.sikuli.script.Screen;
-import org.sikuli.script.ScreenHighlighter;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
@@ -806,6 +805,7 @@ public class SikuliIDE extends JFrame {
           return;
         }
       }
+      SikuliX.cleanUp(0);
       HotkeyManager.getInstance().cleanUp();
       System.exit(0);
     }
@@ -1836,7 +1836,7 @@ public class SikuliIDE extends JFrame {
             SikuliIDE.getInstance().setIsRunningScript(false);
             SikuliIDE.getInstance().setVisible(true);
             _runningThread = null;
-            ScreenHighlighter.closeAll();
+            SikuliX.cleanUp(0);
           }
         }
       };
