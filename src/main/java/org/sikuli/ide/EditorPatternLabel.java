@@ -35,12 +35,10 @@ public class EditorPatternLabel extends EditorRegionLabel {
   private EditorPane pane;
   private float sim;
   private Location off;
-  private String imageNameGiven;
   private String img = null;
   private String imgFileName = null;
   private String imgFile;
   private JFrame imgpop = null;
-  private boolean isImageAbsolute = false;
   private Border pbrd = BorderFactory.createEmptyBorder(5, 5, 5, 5);
   private Border ibrd = BorderFactory.createLineBorder(Color.BLACK);
   private Border brd = BorderFactory.createCompoundBorder(pbrd, ibrd);
@@ -104,13 +102,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
   }
 
   private void setFileNames(String ifile) {
-    File f = new File(ifile);
-    if (!f.isAbsolute()) {
-      f = pane.getFileInBundle(ifile);
-      imageNameGiven = ifile;
-    } else {
-      isImageAbsolute = true;
-    }
+    File f = pane.getFileInBundle(ifile);
     if (f != null && f.exists()) {
       imgFile = f.getAbsolutePath();
       img = f.getName();
@@ -198,12 +190,8 @@ public class EditorPatternLabel extends EditorRegionLabel {
 
   public void setLabelPyText() {
     if (! lblText.startsWith(NOTFOUND)) {
-      if (isImageAbsolute) {
-        pyText = pane.getPatternString(imgFile, sim, off);
-      } else {
-        pyText = pane.getPatternString(imageNameGiven, sim, off);
-      }
-   }
+      pyText = pane.getPatternString(img, sim, off);
+    }
   }
 
   public void setFile(String imgFile) {
@@ -242,7 +230,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
     return pane;
   }
 
-  public static EditorPatternLabel labelFromString(EditorPane parentPane, String str) {   
+  public static EditorPatternLabel labelFromString(EditorPane parentPane, String str) {
     EditorPatternLabel reg = new EditorPatternLabel(parentPane, str);
     return reg;
   }

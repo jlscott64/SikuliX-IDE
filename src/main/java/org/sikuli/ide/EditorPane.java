@@ -689,7 +689,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (ifn == null) {
       return "\"" + EditorPatternLabel.CAPTURE + "\"";
     }
-    String pat = "Pattern(\"" + ifn + "\")";
+    String img = new File(ifn).getName();
+    String pat = "Pattern(\"" + img + "\")";
     String ret = "";
     if (sim > 0) {
       if (sim >= 0.99F) {
@@ -704,7 +705,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (!ret.equals("")) {
       ret = pat + ret;
     } else {
-      ret = "\"" + ifn + "\"";
+      ret = "\"" + img + "\"";
     }
     return ret;
   }

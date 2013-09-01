@@ -22,7 +22,6 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 	public static final int DEFAULT_NUM_MATCHES = 50;
 	static final float DEFAULT_SIMILARITY = 0.7f;
 	private String _imgFilename, _thumbFname, _imgFilenameSaved;
-  private String imageNameGiven;
   private JLabel patternImageIcon = null;
 	private EditorPane _pane;
 	private float _similarity, _similaritySaved;
@@ -38,7 +37,6 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
   private String buttonSimilar = "";
   private String buttonOffset = "";
   private EditorPatternLabel _lbl;
-  private boolean isImageAbsolute = false;
 
   protected EditorPatternButton(EditorPane pane) {
 		init(pane, null);
@@ -48,20 +46,6 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 		init(pane, imgFilename);
 	}
 
-	public EditorPatternButton(EditorPane pane, String imgFilename, boolean isImageAbsolute, String imgGiven) {
-    this.isImageAbsolute = isImageAbsolute;
-    this.imageNameGiven = imgGiven;
-		init(pane, imgFilename);
-	}
-  
-  public void setImageAbsolute(boolean isImageAbsolute) {
-    this.isImageAbsolute = isImageAbsolute;    
-  }
-
-  public void setImageNameGiven(String imageName) {
-    imageNameGiven = imageName;
-  }
-  
   protected EditorPatternButton(EditorPatternLabel lbl) {
     super();
     _lbl = lbl;
@@ -94,72 +78,58 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 	}
 
   public static EditorPatternButton createFromString(EditorPane parentPane, String str, EditorPatternLabel lbl) {
-    if (!str.startsWith("Pattern")) {
-      if (str.charAt(0) == '\"' && str.charAt(str.length() - 1) == '\"') {
-        String filename = str.substring(1, str.length() - 1);
-        File f = new File(filename);
-        boolean isAbsolute = false;
-        if (f.isAbsolute()){
-          isAbsolute = true;
-        } else {
-          f = parentPane.getFileInBundle(filename);
-        }
-        if (f != null) {
-          EditorPatternButton btn = new EditorPatternButton(parentPane, f.getAbsolutePath(), isAbsolute, filename);
-          btn.setImageNameGiven(filename);
-          return btn;
-        }
-      }
-      return null;
-    }
-    EditorPatternButton btn = new EditorPatternButton(parentPane);
-    String[] tokens = str.split("\\)\\s*\\.?");
-    for (String tok : tokens) {
-      //System.out.println("token: " + tok);
-      if (tok.startsWith("exact")) {
-        btn.setExact(true);
-        btn.setSimilarity(0.99f);
-      } else if (tok.startsWith("Pattern")) {
-        String filename = tok.substring(
-                tok.indexOf("\"") + 1, tok.lastIndexOf("\""));
-        File f = new File(filename);
-        if (f.isAbsolute()){
-          btn.setImageAbsolute(true);
-        } else {
-          btn.setImageNameGiven(filename);
-          f = parentPane.getFileInBundle(filename);
-        }
-        if (f != null && f.exists()) {
-          btn.setFilename(f.getAbsolutePath());
-        } else {
-          return null;
-        }
-      } else if (tok.startsWith("similar")) {
-        String strArg = tok.substring(tok.lastIndexOf("(") + 1);
-        try {
-          btn.setSimilarity(Float.valueOf(strArg));
-        } catch (NumberFormatException e) {
-          return null;
-        }
-      } else if (tok.startsWith("firstN")) { // FIXME: replace with limit/max
-        String strArg = tok.substring(tok.lastIndexOf("(") + 1);
-        btn._numMatches = Integer.valueOf(strArg);
-      } else if (tok.startsWith("targetOffset")) {
-        String strArg = tok.substring(tok.lastIndexOf("(") + 1);
-        String[] args = strArg.split(",");
-        try {
-          Location offset = new Location(0, 0);
-          offset.x = Integer.valueOf(args[0]);
-          offset.y = Integer.valueOf(args[1]);
-          btn.setTargetOffset(offset);
-        } catch (NumberFormatException e) {
-          return null;
-        }
-      }
-    }
+		if (!str.startsWith("Pattern")) {
+			if (str.charAt(0) == '\"' && str.charAt(str.length() - 1) == '\"') {
+				String filename = str.substring(1, str.length() - 1);
+				File f = parentPane.getFileInBundle(filename);
+				if (f != null) {
+					return new EditorPatternButton(parentPane, f.getAbsolutePath());
+				}
+			}
+			return null;
+		}
+		EditorPatternButton btn = new EditorPatternButton(parentPane);
+		String[] tokens = str.split("\\)\\s*\\.?");
+		for (String tok : tokens) {
+			//System.out.println("token: " + tok);
+			if (tok.startsWith("exact")) {
+				btn.setExact(true);
+				btn.setSimilarity(0.99f);
+			} else if (tok.startsWith("Pattern")) {
+				String filename = tok.substring(
+								tok.indexOf("\"") + 1, tok.lastIndexOf("\""));
+				File f = parentPane.getFileInBundle(filename);
+				if (f != null && f.exists()) {
+					btn.setFilename(f.getAbsolutePath());
+				} else {
+					return null;
+				}
+			} else if (tok.startsWith("similar")) {
+				String strArg = tok.substring(tok.lastIndexOf("(") + 1);
+				try {
+					btn.setSimilarity(Float.valueOf(strArg));
+				} catch (NumberFormatException e) {
+					return null;
+				}
+			} else if (tok.startsWith("firstN")) { // FIXME: replace with limit/max
+				String strArg = tok.substring(tok.lastIndexOf("(") + 1);
+				btn._numMatches = Integer.valueOf(strArg);
+			} else if (tok.startsWith("targetOffset")) {
+				String strArg = tok.substring(tok.lastIndexOf("(") + 1);
+				String[] args = strArg.split(",");
+				try {
+					Location offset = new Location(0, 0);
+					offset.x = Integer.valueOf(args[0]);
+					offset.y = Integer.valueOf(args[1]);
+					btn.setTargetOffset(offset);
+				} catch (NumberFormatException e) {
+					return null;
+				}
+			}
+		}
     btn.setButtonText();
-    return btn;
-  }
+		return btn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -231,7 +201,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 		String oldBundle = img.getParent();
 		String newBundle = _pane.getSrcBundle();
 		Debug.log(2, "ImageButton.getFilename: " + oldBundle + " " + newBundle);
-		if (!oldBundle.endsWith(".sikuli") || oldBundle == newBundle) {
+		if (oldBundle == newBundle) {
 			return _imgFilename;
 		}
 		setFilename(newBundle + File.separatorChar + img.getName());
@@ -422,11 +392,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 
 	@Override
 	public String toString() {
-    if (isImageAbsolute) {
-      return _pane.getPatternString(_imgFilename, _similarity, _offset);
-    } else {
-      return _pane.getPatternString(imageNameGiven, _similarity, _offset);
-    }
+    return _pane.getPatternString(_imgFilename, _similarity, _offset);
 	}
 
   private void setButtonText() {
