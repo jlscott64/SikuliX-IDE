@@ -122,9 +122,9 @@ public class EditorPatternLabel extends EditorRegionLabel {
 
   private void setFileNames(String ifile) {
     File f = pane.getFileInBundle(ifile);
-    String fileNameGiven = FileManager.slashify(ifile, true);
+    String fileNameGiven = FileManager.slashify(ifile, false);
     if (f != null && f.exists()) {
-      if (isFromCapture || !fileNameGiven.equals(FileManager.slashify(f.getAbsolutePath(), true))) {
+      if (isFromCapture || !fileNameGiven.equals(FileManager.slashify(f.getAbsolutePath(), false))) {
         imgFile = f.getAbsolutePath();
         img = f.getName();
         imgFileName = img.replaceFirst(".png", "").replaceFirst(".jpg", "");
