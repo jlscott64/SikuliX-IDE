@@ -134,14 +134,10 @@ public class ButtonGenCommand extends JButton implements ActionListener,
           pane.insertComponent(btnCapture);
           btnCapture.captureWithAutoDelay();
         } else {
-          if (pane.showThumbs) {
-            if (pref.getPrefMoreImageThumbs()) {
-              pane.insertComponent(new ButtonCapture());
-            } else {
-              pane.insertComponent(new EditorPatternLabel(pane, ""));
-            }
+          if (pane.showThumbs && pref.getPrefMoreImageThumbs()) {
+            pane.insertComponent(new ButtonCapture(pane, line));
           } else {
-            pane.insertString("\"" + EditorPatternLabel.CAPTURE + "\"");
+            pane.insertComponent(new EditorPatternLabel(pane, ""));
           }
         }
         continue;

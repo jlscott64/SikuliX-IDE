@@ -125,7 +125,7 @@ public class SikuliIDE extends JFrame {
     }
     return new ImageIcon(url);
   }
-
+  
 //TODO run only one windowed instance of IDE
   public static void main(String[] args) {
     
@@ -1767,10 +1767,13 @@ public class SikuliIDE extends JFrame {
         w = (int) roi.getWidth();
         h = (int) roi.getHeight();
         ide.setVisible(false);
-        JButton icon;
-        if (prefs.getPrefMoreImageThumbs()) {
-          icon = new EditorRegionButton(codePane, x, y, w, h);
-          codePane.insertComponent(icon);
+        if (codePane.showThumbs) {
+          if (prefs.getPrefMoreImageThumbs()) {
+            codePane.insertComponent(new EditorRegionButton(codePane, x, y, w, h));
+          } else {
+            codePane.insertComponent(new EditorRegionLabel(codePane, 
+                    new EditorRegionButton(codePane, x, y, w, h).toString()));
+          }
         } else {
           codePane.insertString(codePane.getRegionString(x, y, w, h));
         }

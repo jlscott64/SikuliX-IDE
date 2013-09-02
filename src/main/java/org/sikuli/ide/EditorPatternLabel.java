@@ -25,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.text.Element;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 import org.sikuli.script.Location;
 
 public class EditorPatternLabel extends EditorRegionLabel {
@@ -39,6 +40,8 @@ public class EditorPatternLabel extends EditorRegionLabel {
   private String imgFileName = null;
   private String imgFile;
   private JFrame imgpop = null;
+  private boolean onImagePath = true;
+  private boolean isFromCapture;
   private Border pbrd = BorderFactory.createEmptyBorder(5, 5, 5, 5);
   private Border ibrd = BorderFactory.createLineBorder(Color.BLACK);
   private Border brd = BorderFactory.createCompoundBorder(pbrd, ibrd);
@@ -51,8 +54,15 @@ public class EditorPatternLabel extends EditorRegionLabel {
     initLabel(parentPane);
   }
 
+  public EditorPatternLabel(EditorPane parentPane, String str, boolean fromCapture) {
+    super(parentPane, str);
+    isFromCapture = fromCapture;
+    initLabel(parentPane);
+  }
+
   public EditorPatternLabel(EditorPane parentPane, String str, String oldString) {
     super(parentPane, str, oldString);
+    isFromCapture = true;
     initLabel(parentPane);
   }
 
@@ -76,6 +86,9 @@ public class EditorPatternLabel extends EditorRegionLabel {
           sim =0.99F;
         } else if (tok.startsWith("Pattern")) {
           setFileNames(tok.substring(tok.indexOf("\"") + 1, tok.lastIndexOf("\"")));
+          if (lblText == null) {
+            break;
+          }
         } else if (tok.startsWith("similar")) {
           String strArg = tok.substring(tok.lastIndexOf("(") + 1);
           try {
@@ -93,24 +106,39 @@ public class EditorPatternLabel extends EditorRegionLabel {
           } catch (NumberFormatException e) { }
         }
       }
-      setLabelText();
+      if (lblText != null) {
+        setLabelText();
+      }
     } else {
       setFileNames(pyText.replaceAll("\"", ""));
     }
-    setText(lblText);
-    setLabelPyText();
+    if (lblText == null) {
+      onImagePath = false;
+    } else {
+      setText(lblText);
+      setLabelPyText();
+    }
   }
 
   private void setFileNames(String ifile) {
     File f = pane.getFileInBundle(ifile);
+    String fileNameGiven = FileManager.slashify(ifile, true);
     if (f != null && f.exists()) {
-      imgFile = f.getAbsolutePath();
-      img = f.getName();
-      imgFileName = img.replaceFirst(".png", "").replaceFirst(".jpg", "");
+      if (isFromCapture || !fileNameGiven.equals(FileManager.slashify(f.getAbsolutePath(), true))) {
+        imgFile = f.getAbsolutePath();
+        img = f.getName();
+        imgFileName = img.replaceFirst(".png", "").replaceFirst(".jpg", "");
+        lblText = imgFileName;
+      } else {
+        lblText = null;
+      }
     } else {
-      imgFileName = "!? " + ifile + " ?!";
+      lblText = null;
     }
-    lblText = imgFileName;
+  }
+  
+  public boolean isOnImagePath() {
+    return onImagePath;
   }
 
   public void showPopup(boolean show) {
@@ -231,8 +259,13 @@ public class EditorPatternLabel extends EditorRegionLabel {
   }
 
   public static EditorPatternLabel labelFromString(EditorPane parentPane, String str) {
-    EditorPatternLabel reg = new EditorPatternLabel(parentPane, str);
-    return reg;
+    EditorPatternLabel reg = new EditorPatternLabel(parentPane, str, false);
+    if (reg.isOnImagePath()) {
+      return reg;
+    } else {
+      reg = null;
+      return null;
+    }
   }
 
   @Override

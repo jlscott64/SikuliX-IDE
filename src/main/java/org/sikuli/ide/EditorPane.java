@@ -37,6 +37,7 @@ import org.sikuli.basics.SikuliX;
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 
   private static final String me = "EditorPane: ";
+  private static TransferHandler transferHandler = null;
   private PreferencesUser pref;
   private File _editingFile;
   private String _srcBundlePath = null;
@@ -65,7 +66,10 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     setEditorKitForContentType("text/python", new EditorKit());
     setContentType("text/python");
     initKeyMap();
-    setTransferHandler(new MyTransferHandler());
+    if (transferHandler == null) {
+      transferHandler = new MyTransferHandler();
+    }
+    setTransferHandler(transferHandler);
     _highlighter = new EditorCurrentLineHighlighter(this);
     addCaretListener(_highlighter);
     setFont(new Font(pref.getFontName(), Font.PLAIN, pref.getFontSize()));
@@ -328,7 +332,11 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   
   public String getCurrentSrcDir() {
     if(_srcBundlePath != null) {
-      return _editingFile.getParent();
+      if (_editingFile == null || _srcBundleTemp) {
+        return null;
+      } else {
+        return _editingFile.getParent();
+      }
     } else {
       return null;
     }
@@ -671,13 +679,11 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     } else if (ptn == patCaptureBtn) {
       comp = EditorPatternLabel.labelFromString(this, "");
     }
-
     if (comp != null) {
       this.select(startOff, endOff);
       this.insertComponent(comp);
       return true;
     }
-
     return false;
   }
 
@@ -847,7 +853,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
     private static final String me = "EditorPaneTransferHandler: ";
     Map<String, String> _copiedImgs = new HashMap<String, String>();
-
+    
     @Override
     public void exportToClipboard(JComponent comp, Clipboard clip, int action) {
       super.exportToClipboard(comp, clip, action);
@@ -868,7 +874,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
           Debug.error(me + "exportDone: Problem while trying to remove text\n%s", e.getMessage());
         }
       }
-
     }
 
     @Override

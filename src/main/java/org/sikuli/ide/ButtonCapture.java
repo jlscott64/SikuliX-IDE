@@ -27,6 +27,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
   protected Element _line;
 	protected EditorPane _codePane;
 	protected boolean _isCapturing;
+  private boolean captureCancelled = false;
   private EditorPatternLabel _lbl = null;
 
 	public ButtonCapture() {
@@ -153,10 +154,8 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
 				}
 
 				if (filename != null) {
-					String fullpath =
-									Utils.saveImage(simg.getImage(), filename, pane.getSrcBundle());
+					String fullpath =	Utils.saveImage(simg.getImage(), filename, pane.getSrcBundle());
 					if (fullpath != null) {
-						//String fullpath = pane.getFileInBundle(filename).getAbsolutePath();
 						captureCompleted(Utils.slashify(fullpath, false), cp);
 						return;
 					}
@@ -199,7 +198,9 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
 		} else {
       Debug.log(2, "ButtonCapture: Capture cancelled");
       if (src != null) {
+        captureCancelled = true;
         replaceButton(src, "");
+        captureCancelled = false;
       }
     }
 		_isCapturing = false;
@@ -210,7 +211,9 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
 	}
 
   private boolean replaceButton(Element src, String imgFullPath) {
-        if ("".equals(imgFullPath) && _codePane.showThumbs ) {
+        if (captureCancelled) {
+          if (_codePane.showThumbs && PreferencesUser.getInstance().getPrefMoreImageThumbs() || 
+                  !_codePane.showThumbs)
           return true;
         }
 				int start = src.getStartOffset();
@@ -226,19 +229,24 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
 						if (elm.getName().equals(StyleConstants.ComponentElementName)) {
 							AttributeSet attr = elm.getAttributes();
 							Component com = StyleConstants.getComponent(attr);
-							if (com instanceof ButtonCapture
-                      || (com instanceof EditorPatternLabel)
-                         && ((EditorPatternLabel) com).isCaptureButton()) {
+              boolean isButton = com instanceof ButtonCapture;
+              boolean isLabel = com instanceof EditorPatternLabel;
+							if (isButton || isLabel && ((EditorPatternLabel) com).isCaptureButton()) {
 								Debug.log(5, "button is at " + i);
 								int oldCaretPos = _codePane.getCaretPosition();
 								_codePane.select(i, i + 1);
                 if (!_codePane.showThumbs) {
-                  _codePane.insertString((new EditorPatternLabel(_codePane, imgFullPath)).toString());
+                  _codePane.insertString((new EditorPatternLabel(_codePane, imgFullPath, true)).toString());
                 } else {
                   if (PreferencesUser.getInstance().getPrefMoreImageThumbs()) {
                     com = new EditorPatternButton(_codePane, imgFullPath);
                   } else {
-                    com = new EditorPatternLabel(_codePane, imgFullPath, ((EditorPatternLabel) com).toString());
+                    if (captureCancelled) {
+                      com = new EditorPatternLabel(_codePane, "");
+                    }
+                    else {
+                      com = new EditorPatternLabel(_codePane, imgFullPath, true);
+                    }
                   }
                  _codePane.insertComponent(com);
                 }
@@ -263,7 +271,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       if (PreferencesUser.getInstance().getPrefMoreImageThumbs()) {
         pane.insertComponent(new EditorPatternButton(pane, imgFilename));
       } else {
-        pane.insertComponent(new EditorPatternLabel(pane, imgFilename));
+        pane.insertComponent(new EditorPatternLabel(pane, imgFilename, true));
       }
     }
 //TODO set Caret

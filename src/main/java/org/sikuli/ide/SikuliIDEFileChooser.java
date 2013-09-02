@@ -36,13 +36,15 @@ public class SikuliIDEFileChooser {
 
 	private File showFileChooser(String msg, int mode, GeneralFileFilter[] filters, int selectionMode) {
 		if (Settings.isMac()) {
-			if ((Settings.isJava7() && selectionMode == DIRS) || ! accessingAsFile) {
+			if ((Settings.isJava7() && selectionMode == DIRS)) {
         if (accessingAsFile) {
           return showJFileChooser(msg, mode, filters, FILES);
         } else {
           return showJFileChooser(msg, mode, filters, DIRS);
         }
-			} else {
+			} else if ((Settings.isJava7() && selectionMode == FILES)) {
+        return showJFileChooser(msg, mode, filters, FILES);
+      } else {
 //TODO Mac Java7: FileDialog not taking bundles as files
 				FileDialog fd = new FileDialog(_parent, msg, mode);
 				for (GeneralFileFilter filter : filters) {
@@ -87,8 +89,8 @@ public class SikuliIDEFileChooser {
 	public File loadImage() {
 		return showFileChooser("Open a Image File", LOAD,
 						new GeneralFileFilter[]{
-							new GeneralFileFilter("png", "PNG Image Files (*.png)"),
-							new GeneralFileFilter("jpg", "JPEG Image Files (*.jpg)")
+							new GeneralFileFilter("jpg", "JPEG Image Files (*.jpg)"),
+							new GeneralFileFilter("png", "PNG Image Files (*.png)")
 						}, FILES);
 	}
 
