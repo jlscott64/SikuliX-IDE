@@ -1,5 +1,8 @@
-Sikuli IDE 1.0.1<br />Service Update per August 12th, 2013
-===========
+Sikuli IDE 1.1.0 developement branch
+===
+<br />
+**Sikuli IDE 1.0.1<br />Service Update per August 12th, 2013**
+<hr />
 **MANDATORY ;-) --->>>** [Read the Release Notes carefully to avoid problems from the beginning](https://github.com/RaiMan/SikuliX-IDE/wiki/Release-Notes-IDE)
 
 [to download setup-sikuli.jar version 1.0.1 start here](http://www.sikuli.org/download.html)
