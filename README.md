@@ -1,5 +1,7 @@
 Sikuli IDE 1.1.0 developement branch
 ===
+**planned release date December 15th** - betas will be available before
+<hr />
 <br />
 **Sikuli IDE 1.0.1<br />Service Update per August 12th, 2013**
 <hr />
@@ -20,23 +22,12 @@ It depends on [Sikuli API](https://github.com/RaiMan/SikuliX-API), [Sikuli Jytho
 [A more detailed info on usage, contents and production of standalone runnable packages](https://github.com/RaiMan/SikuliX-API/wiki/Maven-support)
 <br /><br />
 **Roadmap**
- - **2013 August 12:** service update Sikuli IDE 1.0.1
-  - bug fixes and some enhancements
-<br />
-<br />
- - **2013 August:** open a developement branch for Sikuli IDE 1.1
-  - better support for images and usage of Sikuli features
-  - implement more standard IDE features
-  - support JRuby as scripting language
-<br />
-<br />
- - **2013 November 29:** release of Sikuli IDE 1.1
-  - open a developement branch for Sikuli IDE 1.2
-  - more scripting languages
+ - **2013 September:** start developement SikuliX 1.1
+<br /><br />
+ - **2013 December 15:** release of SikuliX 1.1
   - new features tbd.
-<br />
-<br />
- - **2014:** new versions in May and November
+<br /><br />
+ - **2014:** new versions in May and December
 
 **History**
  - this is based on the developement at MIT (Tsung-Hsiang Chang (Sean aka vgod) and Tom Yeh) which was discontinued end 2011 (https://github.com/sikuli/sikuli) with a latest version called Sikuli X-1.0r930.
