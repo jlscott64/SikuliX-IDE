@@ -13,7 +13,7 @@
 
   <groupId>org.sikuli</groupId>
   <artifactId>SikuliX-IDE</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 
   <name>SikuliX-IDE</name>
   <url>http://www.sikuli.org</url>
@@ -39,12 +39,6 @@
     <developerConnection>scm:git:git://github.com/RaiMan/SikuliX-API.git</developerConnection>
     <url>git://github.com/RaiMan/SikuliX-API.git</url>
   </scm>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <exclude.nativelayer.mac>NativeLayerForMac.java</exclude.nativelayer.mac>
-    <exclude.nativelayer.null>NativeLayerForNothing</exclude.nativelayer.null>
-  </properties>
 
   <repositories>
     <repository> <!-- needed for jxgrabkey -->
@@ -103,17 +97,17 @@
     <dependency>
       <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-API</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-Basics</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-Jython</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
        <groupId>org.python</groupId>
