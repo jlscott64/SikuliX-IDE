@@ -25,7 +25,6 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXSearchField;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
-import org.sikuli.ide.EditorKit;
 import org.sikuli.ide.extmanager.ExtensionManagerFrame;
 import org.sikuli.ide.util.Utils;
 import org.sikuli.basics.CommandArgs;
@@ -52,9 +51,16 @@ import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.SikuliX;
 
 public class SikuliIDE extends JFrame {
+  
+  private static String me = "IDE";
+  private static String mem = "";
+  private static int lvl = 3;
 
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, "", me + ": " + message, args);
+  }
+  
   // RaiMan not used final static boolean ENABLE_RECORDING = false;
-  private static final String me = "SikuliIDE: ";
   final static boolean ENABLE_UNIFIED_TOOLBAR = true;
   final static Color COLOR_SEARCH_FAILED = Color.red;
   final static Color COLOR_SEARCH_NORMAL = Color.black;
@@ -128,6 +134,30 @@ public class SikuliIDE extends JFrame {
   
 //TODO run only one windowed instance of IDE
   public static void main(String[] args) {
+
+    String[] splashArgs = new String[ ] { 
+      "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - pls. wait ..." };
+
+    File isRunning;
+    isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
+    FileOutputStream isRunningFile = null;
+    try {
+      isRunning.createNewFile();
+      isRunningFile = new FileOutputStream(isRunning);
+      if (null == isRunningFile.getChannel().tryLock()) {
+        splashArgs[5] = "Terminating on FatalError: IDE already running";
+        splash = new MultiFrame(splashArgs);
+        log(-1, splashArgs[5]);
+        SikuliX.pause(3);
+        System.exit(1);
+      }
+    } catch (Exception ex) {
+      splashArgs[5] = "Terminating on FatalError: cannot access IDE lock ";
+      splash = new MultiFrame(splashArgs);
+      log(-1, splashArgs[5] + isRunning.getAbsolutePath());
+      SikuliX.pause(3);
+      System.exit(1);
+    }
     
     if (System.getProperty("sikuli.FromCommandLine") == null) {
       String[] userOptions = SikuliX.collectOptions("IDE", args);
@@ -136,15 +166,13 @@ public class SikuliIDE extends JFrame {
       }
       if (userOptions.length > 0) {
         for (String e : userOptions) {
-          Debug.logx(3, "debug", "SikuliIDE: arg: " + e);
+          log(lvl, "arg: " + e);
         }   
         args = userOptions;
       }
     }
     
     start = (new Date()).getTime();
-    String[] splashArgs = new String[ ] { 
-      "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - pls. wait ..." };
     for (String e : args) {
       splashArgs[3] += e + " ";
     }
@@ -196,9 +224,9 @@ public class SikuliIDE extends JFrame {
     
     if (cmdLine.hasOption(CommandArgsEnum.LOAD.shortname())) {
       loadScript = FileManager.slashify(cmdLine.getOptionValue(CommandArgsEnum.LOAD.longname()),false);    
-      Debug.log(3, "requested to load: " + loadScript);
+      log(lvl, "requested to load: " + loadScript);
       if (loadScript.endsWith(".skl")) {
-        Debug.log(3,me + "Switching to SikuliScript to run " + loadScript);
+        log(lvl, "Switching to SikuliScript to run " + loadScript);
         splash.dispose();
         SikuliScript.main(args);        
       }
@@ -207,7 +235,7 @@ public class SikuliIDE extends JFrame {
     if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname()) ||
         cmdLine.hasOption(CommandArgsEnum.TEST.shortname()) ||
         cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
-      Debug.log(3,me + "Switching to SikuliScript with option -r, -t or -i");
+      log(lvl, "Switching to SikuliScript with option -r, -t or -i");
       splash.dispose();
       SikuliScript.main(args);
     }
@@ -222,7 +250,7 @@ public class SikuliIDE extends JFrame {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
     } catch (Exception e) {
-			Debug.error(me + "Problem loading UIManager!\nError: %s", e.getMessage());
+			log(-1,"Problem loading UIManager!\nError: %s", e.getMessage());
 		}
 
 		if (Settings.isMac()) {
@@ -243,7 +271,7 @@ public class SikuliIDE extends JFrame {
   }
 
   private void initSikuliIDE(String[] args) {
-    Debug.log(5, "create SikuliIDE " + args);
+    Debug.log(3, "create SikuliIDE " + args);
 //    new ScriptRunner(getPyArgs(null));
 
     prefs = PreferencesUser.getInstance();
@@ -376,7 +404,7 @@ public class SikuliIDE extends JFrame {
       Constructor constr = c.getConstructor();
       _native = (NativeLayer) constr.newInstance();
     } catch (Exception e) {
-			Debug.error(me + "Reflection problem: org.sikuli.ide.NativeLayerFor...!\nError: %s", e.getMessage());
+			log(-1,"Reflection problem: org.sikuli.ide.NativeLayerFor...!\nError: %s", e.getMessage());
     }
   }
 
@@ -413,7 +441,7 @@ public class SikuliIDE extends JFrame {
           sbuf.append(bundlePath);
         }
       } catch (Exception e) {
-        Debug.error(me + "Problem while trying to shutdown!\nError: %s", e.getMessage());
+        log(-1,"Problem while trying to shutdown!\nError: %s", e.getMessage());
         return false;
       }
     }
@@ -678,7 +706,7 @@ public class SikuliIDE extends JFrame {
         actMethod = this.getClass().getMethod(item, paramsWithEvent);
         action = item;
       } catch (ClassNotFoundException cnfe) {
-        Debug.error(me + "Can't find menu action: " + cnfe);
+        log(-1,"Can't find menu action: " + cnfe);
       }
     }
 
@@ -691,7 +719,7 @@ public class SikuliIDE extends JFrame {
           params[0] = e;
           actMethod.invoke(this, params);
         } catch (Exception ex) {
-    			Debug.error(me + "Problem when trying to invoke menu action %s\nError: %s", 
+    			log(-1,"Problem when trying to invoke menu action %s\nError: %s", 
                   action, ex.getMessage());
         }
       }
@@ -843,7 +871,7 @@ public class SikuliIDE extends JFrame {
           _mainPane.setSelectedIndex(alreadyOpenedTab);
         }
       } catch (IOException eio) {
-    			Debug.error(me + "Problem when trying to load %s\nError: %s", 
+    			log(-1,"Problem when trying to load %s\nError: %s", 
                   fname, eio.getMessage());
       }
     }
@@ -863,7 +891,7 @@ public class SikuliIDE extends JFrame {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         }
       } catch (IOException eio) {
-    			Debug.error(me + "Problem when trying to save %s\nError: %s", 
+    			log(-1,"Problem when trying to save %s\nError: %s", 
                   fname, eio.getMessage());
       }
     }
@@ -880,7 +908,7 @@ public class SikuliIDE extends JFrame {
           return false;
         }
       } catch (IOException eio) {
-        Debug.error(me + "Problem when trying to save %s\nError: %s", 
+        log(-1,"Problem when trying to save %s\nError: %s", 
                 fname, eio.getMessage());
         return false;
       }
@@ -901,7 +929,7 @@ public class SikuliIDE extends JFrame {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         }
       } catch (IOException eio) {
-    			Debug.error(me + "Problem when trying to save %s\nError: %s", 
+    			log(-1,"Problem when trying to save %s\nError: %s", 
                   fname, eio.getMessage());
       }
     }
@@ -918,7 +946,7 @@ public class SikuliIDE extends JFrame {
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
         fname = codePane.exportAsZip();
       } catch (Exception ex) {
-    			Debug.error(me + "Problem when trying to save %s\nError: %s", 
+    			log(-1,"Problem when trying to save %s\nError: %s", 
                   fname, ex.getMessage());
       }
     }
@@ -1521,7 +1549,7 @@ public class SikuliIDE extends JFrame {
       initToolMenu();
       initHelpMenu();
     } catch (NoSuchMethodException e) {
-      Debug.error(me + "Problem when initializing menues\nError: %s", e.getMessage());
+      log(-1,"Problem when initializing menues\nError: %s", e.getMessage());
     }
 
     _menuBar.add(_fileMenu);
@@ -2066,7 +2094,7 @@ public class SikuliIDE extends JFrame {
                   }
                   return ret;
                 } catch (Exception e) {
-            			Debug.error(me + "Problem closing tab %d\nError: %s", i, e.getMessage());
+            			log(-1,"Problem closing tab %d\nError: %s", i, e.getMessage());
                   return false;
                 }
               }
