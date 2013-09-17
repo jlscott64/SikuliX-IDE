@@ -33,6 +33,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.IResourceLoader;
 import org.sikuli.script.Location;
 import org.sikuli.basics.SikuliX;
+import org.sikuli.basics.Image;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 
@@ -400,12 +401,11 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   }
 
   public File getFileInBundle(String filename) {
-    try {
-      String fullpath = ImageLocator.locate(filename);
-      return new File(fullpath);
-    } catch (IOException e) {
+      String fullpath = new Image(filename).getFilename();
+      if (fullpath != null) {
+        return new File(fullpath);
+      }
       return null;
-    }
   }
   //</editor-fold>
 
