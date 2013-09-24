@@ -524,6 +524,7 @@ public class EditorKit extends StyledEditorKit {
     Debug.log(9, "SikuliEditorKit.write %d %d", pos, len);
     DefaultStyledDocument sdoc = (DefaultStyledDocument) doc;
     int i = pos;
+    String absPath;
     while (i < pos + len) {
       Element e = sdoc.getCharacterElement(i);
       int start = e.getStartOffset(), end = e.getEndOffset();
@@ -532,9 +533,13 @@ public class EditorKit extends StyledEditorKit {
         AttributeSet attr = e.getAttributes();
         Component com = StyleConstants.getComponent(attr);
         out.write(com.toString());
-        if (copiedImgs != null && com instanceof EditorPatternButton) {
-          EditorPatternButton btn = (EditorPatternButton) com;
-          String absPath = btn.getFilename();
+        if (copiedImgs != null && 
+           (com instanceof EditorPatternButton || com instanceof EditorPatternLabel)) {
+          if (com instanceof EditorPatternButton) {
+            absPath = ((EditorPatternButton) com).getFilename();
+          } else {
+            absPath = ((EditorPatternLabel) com).getFile();
+          }
           String fname = (new File(absPath)).getName();
           copiedImgs.put(fname, absPath);
           Debug.log(3, "save image for copy&paste: " + fname + " -> " + absPath);

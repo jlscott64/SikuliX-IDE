@@ -9,19 +9,21 @@ package org.sikuli.ide;
 import org.sikuli.basics.PreferencesUser;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.*;
 import javax.swing.*;
 import org.sikuli.script.Location;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Image;
 
 class EditorPatternButton extends JButton implements ActionListener, Serializable, MouseListener {
 
 	public static final int DEFAULT_NUM_MATCHES = 50;
 	static final float DEFAULT_SIMILARITY = 0.7f;
 	private String _imgFilename, _thumbFname, _imgFilenameSaved;
+  private Image _image = null;
   private JLabel patternImageIcon = null;
 	private EditorPane _pane;
 	private float _similarity, _similaritySaved;
@@ -78,16 +80,15 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 	}
 
   public static EditorPatternButton createFromString(EditorPane parentPane, String str, EditorPatternLabel lbl) {
-		if (!str.startsWith("Pattern")) {
-			if (str.charAt(0) == '\"' && str.charAt(str.length() - 1) == '\"') {
-				String filename = str.substring(1, str.length() - 1);
-				File f = parentPane.getFileInBundle(filename);
-				if (f != null) {
-					return new EditorPatternButton(parentPane, f.getAbsolutePath());
-				}
-			}
-			return null;
-		}
+    if (!str.startsWith("Pattern")) {
+      if (str.charAt(0) == '\"' && str.charAt(str.length() - 1) == '\"') {
+        str = str.substring(1, str.length() - 1);
+        if (parentPane.getImageInBundle(FileManager.slashify(str, false)).isValid()) {
+          return new EditorPatternButton(parentPane, FileManager.slashify(str, false));
+        }
+      }
+      return null;
+    }
 		EditorPatternButton btn = new EditorPatternButton(parentPane);
 		String[] tokens = str.split("\\)\\s*\\.?");
 		for (String tok : tokens) {
@@ -98,12 +99,12 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 			} else if (tok.startsWith("Pattern")) {
 				String filename = tok.substring(
 								tok.indexOf("\"") + 1, tok.lastIndexOf("\""));
-				File f = parentPane.getFileInBundle(filename);
-				if (f != null && f.exists()) {
-					btn.setFilename(f.getAbsolutePath());
-				} else {
-					return null;
-				}
+        Image img = parentPane.getImageInBundle(FileManager.slashify(filename, false));
+        if (img.isValid()) {
+					btn.setFilename(img);
+        } else {
+          return null;
+        }
 			} else if (tok.startsWith("similar")) {
 				String strArg = tok.substring(tok.lastIndexOf("(") + 1);
 				try {
@@ -208,11 +209,18 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 		return _imgFilename;
 	}
 
-  public void setFilename(String newFilename) {
-    _imgFilename = newFilename;
-    _thumbFname = createThumbnail(_imgFilename);
-    setIcon(new ImageIcon(_thumbFname));
+  public void setFilename(String fileName) {
+    _image = _pane.getImageInBundle(fileName);
+    _imgFilename = _image.getFilename();
+    setIcon(new ImageIcon(createThumbnailImage(_imgFilename, PreferencesUser.getInstance().getDefaultThumbHeight())));
     setButtonText();
+  }
+  
+  private void setFilename(Image img) {
+    _image = img;
+    _imgFilename = _image.getFilename();
+    setIcon(new ImageIcon(createThumbnailImage(_imgFilename, PreferencesUser.getInstance().getDefaultThumbHeight())));
+    setButtonText();    
   }
 
 	private String createThumbnail(String imgFname) {
@@ -226,7 +234,13 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 
 	private BufferedImage createThumbnailImage(String imgFname, int maxHeight) {
 		try {
-			BufferedImage img = ImageIO.read(new File(imgFname));
+      BufferedImage img;
+      if (_image != null) {
+        img = _image.getImage();
+      } else {
+        Debug.error("EditorPatternButton: createThumbnailImage: not using Image for: " + imgFname);
+        img = ImageIO.read(new File(imgFname));
+      }
 			int w = img.getWidth(null), h = img.getHeight(null);
 			_imgW = w;
 			_imgH = h;

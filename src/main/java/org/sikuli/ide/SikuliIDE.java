@@ -45,6 +45,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.basics.AutoUpdater;
 import org.sikuli.basics.CommandArgsEnum;
 import org.sikuli.basics.IResourceLoader;
+import org.sikuli.basics.ImagePath;
 import org.sikuli.basics.MultiFrame;
 import org.sikuli.basics.RunSetup;
 import org.sikuli.basics.SikuliScript;
@@ -139,6 +140,7 @@ public class SikuliIDE extends JFrame {
       "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - pls. wait ..." };
 
     File isRunning;
+    new File(Settings.BaseTempPath).mkdirs();
     isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
     FileOutputStream isRunningFile = null;
     try {
@@ -849,6 +851,7 @@ public class SikuliIDE extends JFrame {
       scrPane.setRowHeaderView(lineNumberColumn);
       _mainPane.addTab(_I("tabUntitled"), scrPane);
       _mainPane.setSelectedIndex(_mainPane.getTabCount() - 1);
+      codePane.getSrcBundle();
       codePane.requestFocus();
     }
 
@@ -863,6 +866,7 @@ public class SikuliIDE extends JFrame {
       try {
         doNew(ae);
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
+        codePane.isSourceBundleTemp();
         fname = codePane.loadFile(accessingAsFile);
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
@@ -2112,6 +2116,7 @@ public class SikuliIDE extends JFrame {
           if (fname == null) {
             SikuliIDE.this.setTitle(tab.getTitleAt(i));
           } else {
+            ImagePath.setBundlePath(fname);
             SikuliIDE.this.setTitle(fname);
           }
           SikuliIDE.this.chkShowThumbs.setState(SikuliIDE.this.getCurrentCodePane().showThumbs);

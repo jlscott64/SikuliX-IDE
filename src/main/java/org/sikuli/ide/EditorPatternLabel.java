@@ -13,9 +13,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -25,7 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.text.Element;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Image;
 import org.sikuli.script.Location;
 
 public class EditorPatternLabel extends EditorRegionLabel {
@@ -36,9 +34,10 @@ public class EditorPatternLabel extends EditorRegionLabel {
   private EditorPane pane;
   private float sim;
   private Location off;
-  private String img = null;
-  private String imgFileName = null;
+  private String imgName = null;
+  private String imgNameShort = null;
   private String imgFile;
+  private Image image;
   private JFrame imgpop = null;
   private boolean onImagePath = true;
   private boolean isFromCapture;
@@ -120,15 +119,15 @@ public class EditorPatternLabel extends EditorRegionLabel {
     }
   }
 
-  private void setFileNames(String ifile) {
-    File f = pane.getFileInBundle(ifile);
-    String fileNameGiven = FileManager.slashify(ifile, false);
-    if (f != null && f.exists()) {
-      if (isFromCapture || !fileNameGiven.equals(FileManager.slashify(f.getAbsolutePath(), false))) {
-        imgFile = f.getAbsolutePath();
-        img = f.getName();
-        imgFileName = img.replaceFirst(".png", "").replaceFirst(".jpg", "");
-        lblText = imgFileName;
+  private void setFileNames(String givenName) {
+    Image img = pane.getImageInBundle(givenName);
+    if (img.isValid()) {
+      if (isFromCapture || !img.isAbsolute()) {
+        image = img;
+        imgFile = img.getFilename();
+        imgName = img.getName();
+        imgNameShort = imgName.replaceFirst(".png", "").replaceFirst(".jpg", "");
+        lblText = imgNameShort;
       } else {
         lblText = null;
       }
@@ -144,11 +143,9 @@ public class EditorPatternLabel extends EditorRegionLabel {
   public void showPopup(boolean show) {
     if (show) {
       if (imgpop == null) {
-        BufferedImage image;
-        try {
-          image = ImageIO.read(new File(imgFile));
-        } catch (IOException ex) {
-          Debug.error("EditorPatternLabel: mouseEntered: not found " + this.img);
+        BufferedImage img = image.getImage();
+        if (img == null) {
+          Debug.error("EditorPatternLabel: mouseEntered: not found " + this.imgName);
           return;
         }
         imgpop = new JFrame();
@@ -160,7 +157,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
         Container p = imgpop.getContentPane();
         p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
         JLabel lbl = new JLabel();
-        lbl.setIcon(new ImageIcon(image));
+        lbl.setIcon(new ImageIcon(img));
         lbl.setBorder(brd);
         p.add(Box.createHorizontalGlue());
         p.add(lbl);
@@ -193,10 +190,11 @@ public class EditorPatternLabel extends EditorRegionLabel {
     return (CAPTURE.equals(lblText) || lblText.startsWith(NOTFOUND));
   }
 
-  public void resetLabel(String imgFile, float sim, Location off) {
-    this.imgFile = imgFile;
-    img = (new File(imgFile)).getName();
-    imgFileName = img.replaceFirst(".png", "").replaceFirst(".jpg", "");
+  public void resetLabel(String givenFileName, float sim, Location off) {
+    imgName = (new File(givenFileName)).getName();
+    image = Image.create(imgName);
+    imgFile = image.getFilename();
+    imgNameShort = imgName.replaceFirst(".png", "").replaceFirst(".jpg", "");
     this.sim = sim;
     this.off = off;
     setLabelText();
@@ -212,21 +210,21 @@ public class EditorPatternLabel extends EditorRegionLabel {
     if (off != null && (off.x != 0 || off.y != 0)) {
       buttonOffset = String.format(" (%d,%d)", off.x, off.y);
     }
-    lblText = imgFileName + buttonSimilar + buttonOffset;
+    lblText = imgNameShort + buttonSimilar + buttonOffset;
     setText(lblText);
   }
 
   public void setLabelPyText() {
     if (! lblText.startsWith(NOTFOUND)) {
-      pyText = pane.getPatternString(img, sim, off);
+      pyText = pane.getPatternString(imgName, sim, off);
     }
   }
 
   public void setFile(String imgFile) {
-    img = (new File(imgFile)).getName();
-    pyText = "\"" + img + "\"";
-    imgFileName = pyText.replaceAll("\"", "").replaceFirst(".png", "").replaceFirst(".jpg", "");
-    lblText = imgFileName;
+    imgName = (new File(imgFile)).getName();
+    pyText = "\"" + imgName + "\"";
+    imgNameShort = pyText.replaceAll("\"", "").replaceFirst(".png", "").replaceFirst(".jpg", "");
+    lblText = imgNameShort;
     setText(lblText);
   }
 
@@ -235,7 +233,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
   }
 
   public void setFileName(String img) {
-    this.img = img;
+    this.imgName = img;
   }
 
   public void setTargetOffset(Location off) {

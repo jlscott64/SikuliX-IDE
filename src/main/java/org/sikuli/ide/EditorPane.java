@@ -34,6 +34,7 @@ import org.sikuli.basics.IResourceLoader;
 import org.sikuli.script.Location;
 import org.sikuli.basics.SikuliX;
 import org.sikuli.basics.Image;
+import org.sikuli.basics.ImagePath;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 
@@ -143,6 +144,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (file == null) {
       return null;
     }
+    _srcBundleTemp = false;
     String fname = FileManager.slashify(file.getAbsolutePath(), false);
     SikuliIDE ide = SikuliIDE.getInstance();
     int i = ide.isAlreadyOpen(fname);
@@ -233,6 +235,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       FileManager.deleteTempDir(_srcBundlePath);
       _srcBundleTemp = false;
     }
+    Image.purge(_srcBundlePath);
     setSrcBundle(bundlePath);
     _editingFile = createSourceFile(bundlePath, ".py");
     Debug.log(2, "save to bundle: " + getSrcBundle());
@@ -310,12 +313,15 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       }
       setDirty(false);
     }
+    if (_srcBundlePath != null) {
+      Image.purge(_srcBundlePath);
+    }
     return true;
   }
 
   private void setSrcBundle(String newBundlePath) {
     _srcBundlePath = newBundlePath;
-    ImageLocator.setBundlePath(_srcBundlePath);
+    ImagePath.setBundlePath(_srcBundlePath);
   }
 
   public String getSrcBundle() {
@@ -401,13 +407,18 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   }
 
   public File getFileInBundle(String filename) {
-      String fullpath = new Image(filename).getFilename();
+      String fullpath = Image.create(filename).getFilename();
       if (fullpath != null) {
         return new File(fullpath);
       }
       return null;
   }
-  //</editor-fold>
+  
+  public Image getImageInBundle(String filename) {
+      return Image.create(filename);
+  }
+
+//</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="fill pane content">
   @Override
