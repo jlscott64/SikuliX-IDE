@@ -137,7 +137,7 @@ public class SikuliIDE extends JFrame {
   public static void main(String[] args) {
 
     String[] splashArgs = new String[ ] { 
-      "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - pls. wait ..." };
+      "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - please wait ..." };
 
     File isRunning;
     new File(Settings.BaseTempPath).mkdirs();
@@ -1512,8 +1512,8 @@ public class SikuliIDE extends JFrame {
       AutoUpdater au = new AutoUpdater();
       if (! isAutoCheck) {
 //TODO replace this hack: wait update check
-        f = au.showUpdateFrame("Checking for new version ... pls. wait!",
-            "Checking for new version ... pls. wait! Checking for new version ... pls. wait!", -1);
+        f = au.showUpdateFrame("Checking for new version ... please wait!",
+            "Checking for new version ... please wait! Checking for new version ... please wait!", -1);
       }
       PreferencesUser pref = PreferencesUser.getInstance();
       Debug.log(3, "being asked to check update");
