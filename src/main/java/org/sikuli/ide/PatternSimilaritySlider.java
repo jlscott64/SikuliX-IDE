@@ -25,17 +25,19 @@ class PatternSimilaritySlider extends JSlider {
 
 	private void init() {
 		showValue(lblVal, curVal);
+    setPreferredSize(new Dimension(250, 60));
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		int w = getWidth();
 		final int margin = 13;
-		final int y1 = 20, y2 = 30;
-		for (int i = margin; i < w - margin; i++) {
-			float score = (float) i / (w - margin * 2);
+		final int y1 = 22, y2 = 33;
+    int span = w - margin * 2;
+		for (int i = 0; i < span; i++) {
+			float score = (float) i / span;
 			g.setColor(getScoreColor(score));
-			g.drawLine(i, y1, i, y2);
+			g.drawLine(margin + i, y1, margin + i, y2);
 		}
 		if (getValue() != curVal) {
 			curVal = getValue();

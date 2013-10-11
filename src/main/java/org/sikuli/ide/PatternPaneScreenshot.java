@@ -86,11 +86,9 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
 
     GridBagConstraints c = new GridBagConstraints();
 
-
-    c.fill = 1;
-    c.gridy = 0;
+    c.fill = GridBagConstraints.BOTH;
+    c.gridwidth = GridBagConstraints.REMAINDER;
     pane.add(btnSimilar, c);
-    c.gridwidth = 3;
     pane.add(sldSimilar, c);
 
 //TODO num Matches needed?
