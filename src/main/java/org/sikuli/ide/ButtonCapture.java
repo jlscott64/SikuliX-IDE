@@ -84,28 +84,18 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     if (_isCapturing) {
       return;
     }
-    _isCapturing = true;
     Thread t = new Thread("capture") {
       @Override
       public void run() {
+        _isCapturing = true;
         SikuliIDE ide = SikuliIDE.getInstance();
-        if (delay != 0) {
-          ide.setVisible(false);
-        }
+        ide.setVisible(false);
         try {
           Thread.sleep(delay);
         } catch (Exception e) {
         }
         OverlayCapturePrompt p = new OverlayCapturePrompt(null, ButtonCapture.this);
         p.prompt("Select an image");
-        try {
-          Thread.sleep(500);
-        } catch (Exception e) {
-        }
-        if (delay != 0) {
-          ide.setVisible(true);
-        }
-        ide.requestFocus();
       }
     };
     t.start();
@@ -204,6 +194,9 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       }
     }
     _isCapturing = false;
+    SikuliIDE ide = SikuliIDE.getInstance();
+    ide.setVisible(true);
+    ide.requestFocus();    
   }
 
   private Element getSrcElement() {
