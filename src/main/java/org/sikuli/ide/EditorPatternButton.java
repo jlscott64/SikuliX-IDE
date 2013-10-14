@@ -142,9 +142,8 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 			_imgFilenameSaved = _imgFilename.substring(0);
 			pwin = new PatternWindow(this, _exactSaved, _similarity, _numMatches);
 			pwin.setTargetOffset(_offset);
-		} else {
-			pwin.requestFocus();
 		}
+		pwin.requestFocus();
     Rectangle sb = pwin.getGraphicsConfiguration().getDevice().getDefaultConfiguration().getBounds();
     sb.height -= 100;
     Rectangle wb = pwin.getBounds();
