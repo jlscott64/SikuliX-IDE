@@ -218,7 +218,6 @@ public class SikuliIDE extends JFrame {
         Debug.setDebugLevel(3);
         Debug.setLogFile("");
         Settings.LogTime = true;
-        System.setProperty("sikuli.console", "false");
       } else {
         Debug.setDebugLevel(cmdValue);
       }      
