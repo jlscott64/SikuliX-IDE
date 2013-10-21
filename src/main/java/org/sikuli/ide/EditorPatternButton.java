@@ -16,7 +16,7 @@ import javax.swing.*;
 import org.sikuli.script.Location;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.Image;
+import org.sikuli.script.Image;
 
 class EditorPatternButton extends JButton implements ActionListener, Serializable, MouseListener {
 

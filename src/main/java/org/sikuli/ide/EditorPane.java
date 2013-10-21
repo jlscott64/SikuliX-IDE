@@ -24,7 +24,7 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
-import org.sikuli.basics.ImageLocator;
+import org.sikuli.script.ImageLocator;
 import org.sikuli.basics.Settings;
 import org.sikuli.jython.PythonIndentation;
 import org.sikuli.ide.util.Utils;
@@ -33,8 +33,8 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.IResourceLoader;
 import org.sikuli.script.Location;
 import org.sikuli.basics.SikuliX;
-import org.sikuli.basics.Image;
-import org.sikuli.basics.ImagePath;
+import org.sikuli.script.Image;
+import org.sikuli.script.ImagePath;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 

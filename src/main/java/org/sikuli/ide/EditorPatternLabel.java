@@ -23,7 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.text.Element;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.Image;
+import org.sikuli.script.Image;
 import org.sikuli.script.Location;
 
 public class EditorPatternLabel extends EditorRegionLabel {

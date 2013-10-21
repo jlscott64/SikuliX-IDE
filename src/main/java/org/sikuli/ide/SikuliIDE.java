@@ -45,7 +45,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.basics.AutoUpdater;
 import org.sikuli.basics.CommandArgsEnum;
 import org.sikuli.basics.IResourceLoader;
-import org.sikuli.basics.ImagePath;
+import org.sikuli.script.ImagePath;
 import org.sikuli.basics.MultiFrame;
 import org.sikuli.basics.RunSetup;
 import org.sikuli.basics.SikuliScript;
@@ -1887,6 +1887,7 @@ public class SikuliIDE extends JFrame {
       }
       addPythonCode(srunner);
       try {
+        ImagePath.resetBundlePath(path.getAbsolutePath());
         int ret = srunner.runScript(f, path, 
                 Settings.getArgs(), 
                 new String[] {parent.getAbsolutePath(), 
