@@ -144,7 +144,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (file == null) {
       return null;
     }
-    _srcBundleTemp = false;
     String fname = FileManager.slashify(file.getAbsolutePath(), false);
     SikuliIDE ide = SikuliIDE.getInstance();
     int i = ide.isAlreadyOpen(fname);
@@ -165,6 +164,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
             new FileInputStream(_editingFile), "UTF8")), null);
     updateDocumentListeners();
     setDirty(false);
+    _srcBundleTemp = false;
   }
 
   public String saveFile() throws IOException {
