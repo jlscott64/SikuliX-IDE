@@ -24,3 +24,5 @@ nbactions.xml
 
 ._*
 .DS_Store
+
+*.png
