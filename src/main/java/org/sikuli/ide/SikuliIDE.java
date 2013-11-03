@@ -272,9 +272,6 @@ public class SikuliIDE extends JFrame {
   }
 
   private void initSikuliIDE(String[] args) {
-    Debug.log(3, "create SikuliIDE " + args);
-//    new ScriptRunner(getPyArgs(null));
-
     prefs = PreferencesUser.getInstance();
     if (prefs.getUserType() < 0) {
       prefs.setUserType(PreferencesUser.NEWBEE);
