@@ -24,7 +24,6 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
-import org.sikuli.script.ImageLocator;
 import org.sikuli.basics.Settings;
 import org.sikuli.jython.PythonIndentation;
 import org.sikuli.ide.util.Utils;
@@ -152,19 +151,34 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       return null;
     }
     loadFile(fname);
+    if (_editingFile == null) {
+      return null;
+    }
     return fname;
   }
 
-  public void loadFile(String filename) throws IOException {
+  public void loadFile(String filename) {
     filename = FileManager.slashify(filename, false);
     setSrcBundle(filename + "/");
     File script = new File(filename);
-    _editingFile = FileManager.getScriptFile(script, null, new String[0]);
-    this.read(new BufferedReader(new InputStreamReader(
-            new FileInputStream(_editingFile), "UTF8")), null);
-    updateDocumentListeners();
-    setDirty(false);
-    _srcBundleTemp = false;
+    _editingFile = FileManager.getScriptFile(script, null, null);
+    try {
+      this.read(new BufferedReader(new InputStreamReader(
+              new FileInputStream(_editingFile), "UTF8")), null);
+    } catch (Exception ex) {
+      _editingFile = null;
+    }
+    if (_editingFile != null) {
+      updateDocumentListeners();
+      setDirty(false);
+      _srcBundleTemp = false;
+    } else {
+      _srcBundlePath = null;
+    }
+  }
+  
+  public boolean hasEditingFile() {
+    return _editingFile != null;
   }
 
   public String saveFile() throws IOException {

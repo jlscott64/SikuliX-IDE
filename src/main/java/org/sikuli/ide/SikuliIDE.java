@@ -532,16 +532,14 @@ public class SikuliIDE extends JFrame {
 
   public boolean loadFile(String file) {
     (new FileAction()).doNew(null);
-    try {
+    getCurrentCodePane().loadFile(file);
+    if (getCurrentCodePane().hasEditingFile()) {
       setCurrentFileTabTitle(file);
-      getCurrentCodePane().loadFile(file);
       return true;
-    } catch (IOException e) {
-//TODO close tab again on error
-			Debug.error("Can't load file " + file);
-      Debug.error(e.getMessage());
-      return false;
     }
+    Debug.error("Can't load file " + file);
+//    (new FileAction()).doCloseTab(null);
+    return false;
   }
 
   /**
@@ -580,8 +578,11 @@ public class SikuliIDE extends JFrame {
   }
 
   public int isAlreadyOpen(String filename) {
-    alreadyOpenedTab = getOpenedFilenames().indexOf(filename);
-    return alreadyOpenedTab;
+    int aot = getOpenedFilenames().indexOf(filename);
+    if (aot > -1) {
+      alreadyOpenedTab = aot;
+    }
+    return aot;
   }
 
   private void autoCheckUpdate() {
@@ -867,7 +868,7 @@ public class SikuliIDE extends JFrame {
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         } else {
-          doCloseTab(ae);
+          doCloseTab(null);
           _mainPane.setSelectedIndex(alreadyOpenedTab);
         }
       } catch (IOException eio) {
@@ -953,6 +954,10 @@ public class SikuliIDE extends JFrame {
 
     public void doCloseTab(ActionEvent ae) {
       EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
+      if (ae == null) {
+        _mainPane.remove(_mainPane.getSelectedIndex());
+        return;
+      }
       try {
         if (codePane.close()) {
           _mainPane.remove(_mainPane.getSelectedIndex());
