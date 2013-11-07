@@ -288,6 +288,7 @@ public class SikuliIDE extends JFrame {
     _windowLocation = prefs.getIdeLocation();
     Screen m = (new Location(_windowLocation)).getScreen();
     if (m == null) {
+      Debug.error("IDE: remembered window not valid - going to primary screen");
       m = Screen.getPrimaryScreen();
       _windowSize.width = 0;
     }
