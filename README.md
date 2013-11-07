@@ -1,6 +1,6 @@
 Sikuli IDE 1.1.0 developement branch
 ===
-**planned release date December 15th** - betas will be available before
+**planned release date December 15th** - betas will be available before [(... look here)](https://launchpad.net/sikuli/+download)
 <hr />
 <br />
 **Sikuli IDE 1.0.1<br />Service Update per August 12th, 2013**
