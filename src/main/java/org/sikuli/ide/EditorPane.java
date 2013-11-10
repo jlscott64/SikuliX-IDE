@@ -813,6 +813,12 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
    * }
    */
   public int search(String str, int pos, boolean forward) {
+    boolean isCaseSensitive = true;
+    String toSearch = str;
+    if (str.startsWith("!")) {
+      str = str.substring(1).toUpperCase();
+      isCaseSensitive = false;
+    }
     int ret = -1;
     Document doc = getDocument();
     Debug.log(9, "search caret: " + pos + ", " + doc.getLength());
@@ -827,15 +833,18 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
         body = doc.getText(0, pos);
         begin = 0;
       }
+      if (!isCaseSensitive) {
+        body = body.toUpperCase();
+      }
       Pattern pattern = Pattern.compile(Pattern.quote(str));
       Matcher matcher = pattern.matcher(body);
       ret = continueSearch(matcher, begin, forward);
       if (ret < 0) {
         if (forward && pos != 0) {
-          return search(str, 0, forward);
+          return search(toSearch, 0, forward);
         }
         if (!forward && pos != doc.getLength()) {
-          return search(str, doc.getLength(), forward);
+          return search(toSearch, doc.getLength(), forward);
         }
       }
     } catch (BadLocationException e) {

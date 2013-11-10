@@ -1153,6 +1153,9 @@ public class SikuliIDE extends JFrame {
     }
 
     private boolean _find(String str, int begin, boolean forward) {
+      if (str == "!") {
+        return false;
+      }
       EditorPane codePane = getCurrentCodePane();
       int pos = codePane.search(str, begin, forward);
       Debug.log(7, "find \"" + str + "\" at " + begin + ", found: " + pos);
@@ -2041,6 +2044,8 @@ public class SikuliIDE extends JFrame {
     _searchField.setPreferredSize(new Dimension(220, 30));
     _searchField.setMaximumSize(new Dimension(380, 30));
     _searchField.setMargin(new Insets(0, 3, 0, 3));
+    _searchField.setToolTipText("Search is case sensitive - "
+            + "start with ! to make search not case sensitive");
 
     _searchField.setCancelAction(new ActionListener() {
       @Override
