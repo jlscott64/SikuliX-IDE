@@ -370,12 +370,15 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     }
     return "Untitled";
   }
-
+  
   public File getCurrentFile() {
-    if (_editingFile == null && isDirty()) {
+    return getCurrentFile(true);    
+  }
+  
+  public File getCurrentFile(boolean shouldSave) {
+    if (shouldSave && _editingFile == null && isDirty()) {
       try {
         saveAsFile(Settings.isMac());
-        return _editingFile;
       } catch (IOException e) {
         Debug.error(me + "getCurrentFile: Problem while trying to save %s\n%s", 
                 _editingFile.getAbsolutePath(), e.getMessage());

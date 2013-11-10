@@ -68,6 +68,7 @@ public class SikuliIDE extends JFrame {
   final static int WARNING_CANCEL = 2;
   final static int WARNING_ACCEPTED = 1;
   final static int WARNING_DO_NOTHING = 0;
+  final static int IS_SAVE_ALL = 3;
   static boolean _runningSkl = false;
   private static NativeLayer _native;
   private Dimension _windowSize = null;
@@ -430,6 +431,9 @@ public class SikuliIDE extends JFrame {
             continue;
           }
         }
+        if (action == IS_SAVE_ALL) {
+          continue;
+        }
         File f = codePane.getCurrentFile();
         if (f != null) {
           String bundlePath = codePane.getSrcBundle();
@@ -440,7 +444,7 @@ public class SikuliIDE extends JFrame {
           sbuf.append(bundlePath);
         }
       } catch (Exception e) {
-        log(-1,"Problem while trying to shutdown!\nError: %s", e.getMessage());
+        log(-1,"Problem while trying to save all changed-not-saved scripts!\nError: %s", e.getMessage());
         return false;
       }
     }
@@ -543,19 +547,6 @@ public class SikuliIDE extends JFrame {
     return false;
   }
 
-  /**
-   * filename of current script to run
-   *
-   * @return absolute path
-   * @deprecated (used by IDE Unitest)
-   */
-  @Deprecated
-  public String getCurrentFilename() {
-    EditorPane pane = getCurrentCodePane();
-    String fname = pane.getCurrentFile().getAbsolutePath();
-    return fname;
-  }
-
   public ArrayList<String> getOpenedFilenames() {
     int nTab = _mainPane.getTabCount();
     File file = null;
@@ -565,7 +556,7 @@ public class SikuliIDE extends JFrame {
       for (int i = 0; i < nTab; i++) {
         JScrollPane scrPane = (JScrollPane) _mainPane.getComponentAt(i);
         EditorPane codePane = (EditorPane) scrPane.getViewport().getView();
-        file = codePane.getCurrentFile();
+        file = codePane.getCurrentFile(false);
         if (file != null) {
           filePath = Utils.slashify(file.getAbsolutePath(), false);
           filePath = filePath.substring(0, filePath.lastIndexOf("/"));
@@ -770,6 +761,12 @@ public class SikuliIDE extends JFrame {
             new FileAction(FileAction.SAVE_AS_FOLDER)));      
     }
 
+//TODO    _fileMenu.add(createMenuItem(_I("menuFileSaveAs"),
+      _fileMenu.add(createMenuItem("Save all",
+            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
+            InputEvent.CTRL_MASK | scMask),
+            new FileAction(FileAction.SAVE_ALL)));
+
      _fileMenu.add(createMenuItem(_I("menuFileExport"),
      KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E,
      InputEvent.SHIFT_MASK | scMask),
@@ -802,6 +799,7 @@ public class SikuliIDE extends JFrame {
     static final String SAVE = "doSave";
     static final String SAVE_AS = "doSaveAs";
     static final String SAVE_AS_FOLDER = "doSaveAsFolder";
+    static final String SAVE_ALL = "doSaveAll";
     static final String EXPORT = "doExport";
     static final String CLOSE_TAB = "doCloseTab";
     static final String PREFERENCES = "doPreferences";
@@ -899,6 +897,9 @@ public class SikuliIDE extends JFrame {
     }
 
     public boolean doSaveIntern(int tabIndex) {
+      int currentTab = _mainPane.getSelectedIndex();
+      _mainPane.setSelectedIndex(tabIndex);
+      boolean retval = true;
       JScrollPane scrPane = (JScrollPane) _mainPane.getComponentAt(tabIndex);
       EditorPane codePane = (EditorPane) scrPane.getViewport().getView();
       String fname = null;
@@ -907,14 +908,15 @@ public class SikuliIDE extends JFrame {
         if (fname != null) {
           SikuliIDE.getInstance().setFileTabTitle(fname, tabIndex);
         } else {
-          return false;
+          retval = false;
         }
       } catch (IOException eio) {
         log(-1,"Problem when trying to save %s\nError: %s", 
                 fname, eio.getMessage());
-        return false;
+          retval = false;
       }
-      return true;
+      _mainPane.setSelectedIndex(currentTab);      
+      return retval;
     }
 
     public void doSaveAs(ActionEvent ae) {
@@ -940,6 +942,14 @@ public class SikuliIDE extends JFrame {
       Debug.log(3, "IDE: doSaveAsFolder requested");
       ACCESSING_AS_FOLDER = true;
       doSaveAs(ae);      
+    }
+    
+    public void doSaveAll(ActionEvent ae) {
+      Debug.log(3, "IDE: doSaveAll requested");
+      if (!checkDirtyPanes()) {
+        return;
+      }
+      saveSession(IS_SAVE_ALL, false);
     }
     
     public void doExport(ActionEvent ae) {
@@ -1019,7 +1029,6 @@ public class SikuliIDE extends JFrame {
     }
     //RaiMan not used: getRootPane().putClientProperty("Window.documentModified", false);
     return false;
-
   }
   //</editor-fold>
 
