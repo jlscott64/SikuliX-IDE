@@ -1851,11 +1851,10 @@ public class SikuliIDE extends JFrame {
 
     public void runCurrentScript() {
       SikuliIDE ide = SikuliIDE.getInstance();
-      ide.setVisible(false);
       if (ideIsRunningScript || !ide.doBeforeRun()) {
-        ide.setVisible(true);
         return;
       }
+      ide.setVisible(false);
       if (ide.firstRun) {
         SikuliX.displaySplashFirstTime(new String[0]);
         ide.firstRun = false;
