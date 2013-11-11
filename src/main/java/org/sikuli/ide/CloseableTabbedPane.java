@@ -61,6 +61,7 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
    */
   private Icon pressedCloseIcon = SikuliIDE.getIconResource("/icons/close-pressed.gif");
 
+  private int otherTab = -1;
 
   /**
    * Creates a new instance of <code>CloseableTabbedPane</code>
@@ -179,6 +180,10 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
         icon.mouseover = false;
     }
     repaint();
+    if (otherTab > -1) {
+      setSelectedIndex(otherTab);
+      otherTab = -1;
+    }
   }
 
   /**
@@ -195,7 +200,9 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
    * @param e the <code>MouseEvent</code>
    */
 	@Override
-  public void mouseReleased(MouseEvent e) { }
+  public void mouseReleased(MouseEvent e) { 
+    processMouseEvents(e);
+  }
 
   /**
    * Invoked when a mouse button is pressed on a component and then dragged.
@@ -232,6 +239,10 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
     int tabNumber = getUI().tabForCoordinate(this, e.getX(), e.getY());
     if (tabNumber < 0) return;
     //Debug.log("click tab: "  + tabNumber + " cur: " + getSelectedIndex());
+    if (e.isPopupTrigger()) {
+      otherTab = getSelectedIndex();
+      return;
+    }
     CloseTabIcon icon = (CloseTabIcon) getIconAt(tabNumber);
     if (icon != null) {
       Rectangle rect= icon.getBounds();
@@ -253,18 +264,7 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
             if (fireCloseTab(selIndex)) {
               if (selIndex > 0) {
                 // to prevent uncatchable null-pointers
-                Rectangle rec = getUI().getTabBounds(this, selIndex - 1);
-
-                MouseEvent event = new MouseEvent((Component) e.getSource(),
-                                                  e.getID() + 1,
-                                                  System.currentTimeMillis(),
-                                                  e.getModifiers(),
-                                                  rec.x,
-                                                  rec.y,
-                                                  e.getClickCount(),
-                                                  e.isPopupTrigger(),
-                                                  e.getButton());
-                dispatchEvent(event);
+                selectTabInMouseProcessing(e, selIndex-1);
               }
               //the tab is being closed
               //removeTabAt(tabNumber);
@@ -284,6 +284,20 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
         repaint(drawRect);
       }
     }
+  }
+  
+  private void selectTabInMouseProcessing(MouseEvent e, int tabIndex) {
+    Rectangle rec = getUI().getTabBounds(this, tabIndex);
+    MouseEvent event = new MouseEvent((Component) e.getSource(),
+            e.getID() + 1,
+            System.currentTimeMillis(),
+            e.getModifiers(),
+            rec.x,
+            rec.y,
+            e.getClickCount(),
+            false,
+            e.getButton());
+    dispatchEvent(event);
   }
 
   /**
