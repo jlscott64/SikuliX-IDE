@@ -29,16 +29,18 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
   protected String pyText;
   protected String oldPyText = null;
   private EditorPane editor;
-  private Color bc = Color.BLACK;
-  private Color bcs = Color.RED;
+  private final Color bc = Color.BLACK;
+  private final Color bcs = Color.RED;
   private Color fc;
-  private Color fcs = Color.RED;
-  private Border paddingBorder = BorderFactory.createEmptyBorder(0, 4, 0, 3);
-  private Border border = BorderFactory.createLineBorder(bc);
-  private Border borders = BorderFactory.createLineBorder(bcs);
-  private Border bfinal = BorderFactory.createCompoundBorder(paddingBorder, border);
-  private Border bfinals = BorderFactory.createCompoundBorder(paddingBorder, borders);
+  private final Color fcs = Color.RED;
+  private final Border paddingBorder = BorderFactory.createEmptyBorder(0, 4, 0, 3);
+  private final Border border = BorderFactory.createLineBorder(bc);
+  private final Border borders = BorderFactory.createLineBorder(bcs);
+  private final Border bfinal = BorderFactory.createCompoundBorder(paddingBorder, border);
+  private final Border bfinals = BorderFactory.createCompoundBorder(paddingBorder, borders);
 
+  private SikuliIDEPopUpMenu popMenu = null;
+  private boolean wasPopup = false;
 
   EditorRegionLabel() {
   }
@@ -50,16 +52,24 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
   EditorRegionLabel(EditorPane pane, String lblText, String oldText) {
     oldPyText = oldText;
     init(pane, lblText);
-}
+  }
 
-  public void init(EditorPane pane, String lblText) {
-      editor = pane;
-      pyText = lblText;
-      setFont(new Font(editor.getFont().getFontName(), Font.PLAIN, editor.getFont().getSize()));
-      setBorder(bfinal);
-      setCursor(new Cursor(Cursor.HAND_CURSOR));
-      addMouseListener(this);
-      setText(pyText.replaceAll("Region", "").replaceAll("\\(", "").replaceAll("\\)", ""));
+  private void init(EditorPane pane, String lblText) {
+    editor = pane;
+    pyText = lblText;
+    setFont(new Font(editor.getFont().getFontName(), Font.PLAIN, editor.getFont().getSize()));
+    setBorder(bfinal);
+    setCursor(new Cursor(Cursor.HAND_CURSOR));
+    addMouseListener(this);
+    setText(pyText.replaceAll("Region", "").replaceAll("\\(", "").replaceAll("\\)", ""));
+    popMenu = new SikuliIDEPopUpMenu(SikuliIDEPopUpMenu.POP_IMAGE, this);
+    if (!popMenu.isValidMenu()) {
+      popMenu = null;
+    }
+  }
+  
+  public boolean isRegionLabel() {
+    return true;
   }
 
   public static EditorRegionLabel labelFromString(EditorPane parentPane, String str) {
@@ -76,7 +86,8 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
       if (r != null) {
         try {
           Thread.sleep(300);
-        } catch (InterruptedException ie) {}
+        } catch (InterruptedException ie) {
+        }
         doUpdate(r);
       }
     }
@@ -84,11 +95,11 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
   }
 
   public void doUpdate(ScreenImage simg) {
-        Rectangle roi = simg.getROI();
-        pyText = String.format("%d,%d,%d,%d",
-                (int) roi.x, (int) roi.y, (int) roi.width, (int) roi.height);
-        setText(pyText);
-        pyText = "Region(" + pyText + ")";
+    Rectangle roi = simg.getROI();
+    pyText = String.format("%d,%d,%d,%d",
+            (int) roi.x, (int) roi.y, (int) roi.width, (int) roi.height);
+    setText(pyText);
+    pyText = "Region(" + pyText + ")";
   }
 
   @Override
@@ -96,15 +107,32 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
     return pyText;
   }
 
-  //<editor-fold defaultstate="collapsed" desc="Mouse events not used">
   @Override
-  public void mousePressed(MouseEvent me) {}
+  public void mousePressed(MouseEvent me) {
+    checkPopup(me);
+  }
+
   @Override
-  public void mouseReleased(MouseEvent me) {}
-  //</editor-fold>
+  public void mouseReleased(MouseEvent me) {
+     checkPopup(me);
+ }
+
+  private void checkPopup(MouseEvent me) {
+    if (me.isPopupTrigger()) {
+      wasPopup = true;
+      if (popMenu != null) {
+        popMenu.show(this, me.getX(), me.getY());
+      }
+      return;
+    }
+  }
 
   @Override
   public void mouseClicked(MouseEvent me) {
+    if (wasPopup) {
+      wasPopup = false;
+      return;
+    }
     SikuliIDE ide = SikuliIDE.getInstance();
     EditorPane codePane = ide.getCurrentCodePane();
     ide.setVisible(false);
@@ -126,4 +154,3 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
     setBorder(bfinal);
   }
 }
-

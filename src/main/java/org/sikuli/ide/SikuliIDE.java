@@ -136,7 +136,6 @@ public class SikuliIDE extends JFrame {
   
 //TODO run only one windowed instance of IDE
   public static void main(String[] args) {
-
     String[] splashArgs = new String[ ] { 
       "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - please wait ..." };
 
@@ -483,6 +482,14 @@ public class SikuliIDE extends JFrame {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Support SikuliIDE">
+  public JMenu getFileMenu() {
+    return _fileMenu;
+  }
+  
+  public JMenu getRunMenu() {
+    return _runMenu;
+  }
+  
   public CloseableTabbedPane getTabPane() {
     return _mainPane;
   }
@@ -719,6 +726,7 @@ public class SikuliIDE extends JFrame {
 
   //<editor-fold defaultstate="collapsed" desc="Init FileMenu">
   private void initFileMenu() throws NoSuchMethodException {
+    JMenuItem jmi;
     int scMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     _fileMenu.setMnemonic(java.awt.event.KeyEvent.VK_F);
 
@@ -744,14 +752,16 @@ public class SikuliIDE extends JFrame {
             new FileAction(FileAction.OPEN_FOLDER)));      
     }
 
-    _fileMenu.add(createMenuItem(_I("menuFileSave"),
+    jmi = _fileMenu.add(createMenuItem(_I("menuFileSave"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, scMask),
             new FileAction(FileAction.SAVE)));
+     jmi.setName("SAVE");
 
-    _fileMenu.add(createMenuItem(_I("menuFileSaveAs"),
+    jmi = _fileMenu.add(createMenuItem(_I("menuFileSaveAs"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
             InputEvent.SHIFT_MASK | scMask),
             new FileAction(FileAction.SAVE_AS)));
+     jmi.setName("SAVE_AS");
 
     if (Settings.isMac() && !Settings.handlesMacBundles) {
     _fileMenu.add(createMenuItem(_I("Save as folder.sikuli ..."),
@@ -761,7 +771,7 @@ public class SikuliIDE extends JFrame {
             new FileAction(FileAction.SAVE_AS_FOLDER)));      
     }
 
-//TODO    _fileMenu.add(createMenuItem(_I("menuFileSaveAs"),
+//TODO    _fileMenu.add(createMenuItem(_I("menuFileSaveAll"),
       _fileMenu.add(createMenuItem("Save all",
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,
             InputEvent.CTRL_MASK | scMask),
@@ -772,9 +782,10 @@ public class SikuliIDE extends JFrame {
      InputEvent.SHIFT_MASK | scMask),
      new FileAction(FileAction.EXPORT)));
 
-		 _fileMenu.add(createMenuItem(_I("menuFileCloseTab"),
+		 jmi = _fileMenu.add(createMenuItem(_I("menuFileCloseTab"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, scMask),
             new FileAction(FileAction.CLOSE_TAB)));
+     jmi.setName("CLOSE_TAB");
 
     if (!Settings.isMac()) {
        _fileMenu.addSeparator();
@@ -789,6 +800,8 @@ public class SikuliIDE extends JFrame {
               null, new FileAction(FileAction.QUIT)));
     }
   }
+  
+  
 
   class FileAction extends MenuAction {
 
@@ -845,8 +858,13 @@ public class SikuliIDE extends JFrame {
       JScrollPane scrPane = new JScrollPane(codePane);
       lineNumberColumn = new EditorLineNumberView(codePane);
       scrPane.setRowHeaderView(lineNumberColumn);
-      _mainPane.addTab(_I("tabUntitled"), scrPane);
-      _mainPane.setSelectedIndex(_mainPane.getTabCount() - 1);
+      if (ae == null) {
+        _mainPane.addTab(_I("tabUntitled"), scrPane);
+        _mainPane.setSelectedIndex(_mainPane.getTabCount() - 1);
+      } else {
+        _mainPane.addTab(_I("tabUntitled"), scrPane, 0);
+        _mainPane.setSelectedIndex(0);
+      }
       codePane.getSrcBundle();
       codePane.requestFocus();
     }
@@ -860,7 +878,7 @@ public class SikuliIDE extends JFrame {
       alreadyOpenedTab = _mainPane.getSelectedIndex();
       String fname = null;
       try {
-        doNew(ae);
+        doNew(null);
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
         codePane.isSourceBundleTemp();
         fname = codePane.loadFile(accessingAsFile);
@@ -1272,23 +1290,26 @@ public class SikuliIDE extends JFrame {
 
   //<editor-fold defaultstate="collapsed" desc="Init Run Menu">
   private void initRunMenu() throws NoSuchMethodException {
+    JMenuItem item;
     int scMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     _runMenu.setMnemonic(java.awt.event.KeyEvent.VK_R);
-    _runMenu.add(createMenuItem(_I("menuRunRun"),
+    item = _runMenu.add(createMenuItem(_I("menuRunRun"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, scMask),
             new RunAction(RunAction.RUN)));
-    _runMenu.add(createMenuItem(_I("menuRunRunAndShowActions"),
+    item.setName("RUN");
+    item = _runMenu.add(createMenuItem(_I("menuRunRunAndShowActions"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R,
             InputEvent.ALT_MASK | scMask),
             new RunAction(RunAction.RUN_SHOW_ACTIONS)));
+    item.setName("RUN_SLOWLY");
 
     PreferencesUser pref = PreferencesUser.getInstance();
-    JMenuItem stopItem = createMenuItem(_I("menuRunStop"),
+    item = createMenuItem(_I("menuRunStop"),
             KeyStroke.getKeyStroke(
             pref.getStopHotkey(), pref.getStopHotkeyModifiers()),
             new RunAction(RunAction.RUN_SHOW_ACTIONS));
-    stopItem.setEnabled(false);
-    _runMenu.add(stopItem);
+    item.setEnabled(false);
+    _runMenu.add(item);
   }
 
   class RunAction extends MenuAction {
@@ -1850,10 +1871,12 @@ public class SikuliIDE extends JFrame {
     }
 
     public void runCurrentScript() {
+      SikuliIDE.getStatusbar().setMessage("... PLEASE WAIT ... checking IDE state before running script");
       SikuliIDE ide = SikuliIDE.getInstance();
       if (ideIsRunningScript || !ide.doBeforeRun()) {
         return;
       }
+      SikuliIDE.getStatusbar().resetMessage();
       ide.setVisible(false);
       if (ide.firstRun) {
         SikuliX.displaySplashFirstTime(new String[0]);
@@ -1933,10 +1956,9 @@ public class SikuliIDE extends JFrame {
     }
 
     public void addErrorMark(int line) {
-      if (line < -1) {
+      if (line < 0) {
         line *= -1;
-      }
-      else {
+      } else {
         return;
       }
       JScrollPane scrPane = (JScrollPane) _mainPane.getSelectedComponent();
@@ -2146,7 +2168,7 @@ public class SikuliIDE extends JFrame {
   private void initMsgPane(boolean atBottom) {
     msgPane = new JTabbedPane();
     _console = new EditorConsolePane();
-    msgPane.addTab(_I("paneMessage"), _console);
+    msgPane.addTab(_I("paneMessage"),null, _console, "DoubleClick to hide/unhide");
     if (Settings.isWindows() || Settings.isLinux()) {
       msgPane.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 8));
     }

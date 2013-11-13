@@ -47,6 +47,8 @@ public class EditorPatternLabel extends EditorRegionLabel {
 //TODO clickToShow: make a user pref
   private boolean clickToShow = false;
 
+  private SikuliIDEPopUpMenu popMenu = null;
+  private boolean wasPopup = false;
 
   public EditorPatternLabel(EditorPane parentPane, String str) {
     super(parentPane, str);
@@ -70,19 +72,19 @@ public class EditorPatternLabel extends EditorRegionLabel {
     initLabel(parentPane);
   }
 
-  private void initLabel (EditorPane parentPane) {
+  private void initLabel(EditorPane parentPane) {
     pane = parentPane;
     sim = 0.7F;
-    off = new Location(0,0);
+    off = new Location(0, 0);
     if ("".equals(pyText)) {
       lblText = CAPTURE;
       pyText = "\"" + lblText + "\"";
-    } else if (pyText.startsWith("Pattern")){
-  		String[] tokens = pyText.split("\\)\\s*\\.?");
+    } else if (pyText.startsWith("Pattern")) {
+      String[] tokens = pyText.split("\\)\\s*\\.?");
       for (String tok : tokens) {
         //System.out.println("token: " + tok);
         if (tok.startsWith("exact")) {
-          sim =0.99F;
+          sim = 0.99F;
         } else if (tok.startsWith("Pattern")) {
           setFileNames(tok.substring(tok.indexOf("\"") + 1, tok.lastIndexOf("\"")));
           if (lblText == null) {
@@ -102,7 +104,8 @@ public class EditorPatternLabel extends EditorRegionLabel {
             off = new Location(0, 0);
             off.x = Integer.valueOf(args[0]);
             off.y = Integer.valueOf(args[1]);
-          } catch (NumberFormatException e) { }
+          } catch (NumberFormatException e) {
+          }
         }
       }
       if (lblText != null) {
@@ -117,6 +120,15 @@ public class EditorPatternLabel extends EditorRegionLabel {
       setText(lblText);
       setLabelPyText();
     }
+    popMenu = new SikuliIDEPopUpMenu(SikuliIDEPopUpMenu.POP_IMAGE, this);
+    if (!popMenu.isValidMenu()) {
+      popMenu = null;
+    }
+  }
+
+  @Override
+  public boolean isRegionLabel() {
+    return false;
   }
 
   private void setFileNames(String givenName) {
@@ -135,7 +147,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
       lblText = null;
     }
   }
-  
+
   public boolean isOnImagePath() {
     return onImagePath;
   }
@@ -167,12 +179,12 @@ public class EditorPatternLabel extends EditorRegionLabel {
       Point p = getLocationOnScreen();
       Rectangle r = (new Location(p)).getScreen().getRect();
       Point p1 = new Point();
-      if (p.y < (r.y + r.height)/2) {
-        p1.y = p.y + getHeight()+3;
+      if (p.y < (r.y + r.height) / 2) {
+        p1.y = p.y + getHeight() + 3;
       } else {
         p1.y = p.y - 3 - imgpop.getHeight();
       }
-      if (p.x < (r.x + r.width)/2) {
+      if (p.x < (r.x + r.width) / 2) {
         p1.x = p.x;
       } else {
         p1.x = p.x - imgpop.getWidth() + getWidth();
@@ -204,7 +216,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
   public void setLabelText() {
     String buttonSimilar = "";
     if (sim != 0.7F) {
-      buttonSimilar = String.format(Locale.ENGLISH, " .%d", (int) (sim*100F));
+      buttonSimilar = String.format(Locale.ENGLISH, " .%d", (int) (sim * 100F));
     }
     String buttonOffset = "";
     if (off != null && (off.x != 0 || off.y != 0)) {
@@ -215,7 +227,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
   }
 
   public void setLabelPyText() {
-    if (! lblText.startsWith(NOTFOUND)) {
+    if (!lblText.startsWith(NOTFOUND)) {
       pyText = pane.getPatternString(imgName, sim, off);
     }
   }
@@ -267,7 +279,34 @@ public class EditorPatternLabel extends EditorRegionLabel {
   }
 
   @Override
+  public void mousePressed(MouseEvent me) {
+    checkPopup(me);
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent me) {
+    checkPopup(me);
+  }
+
+  private void checkPopup(MouseEvent me) {
+    if (me.isPopupTrigger()) {
+      wasPopup = true;
+      if (popMenu != null) {
+        if (imgpop != null && imgpop.isShowing()) {
+          showPopup(false);
+        }
+        popMenu.show(this, me.getX(), me.getY());
+      }
+      return;
+    }
+  }
+
+  @Override
   public void mouseClicked(MouseEvent me) {
+    if (wasPopup) {
+      wasPopup = false;
+      return;
+    }
     if (clickToShow) {
       if (imgpop != null) {
         if (!imgpop.isShowing()) {
@@ -285,7 +324,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
         showPopup(false);
       }
     }
-    if ( ! CAPTURE.equals(lblText) && ! lblText.startsWith(NOTFOUND)) {
+    if (!CAPTURE.equals(lblText) && !lblText.startsWith(NOTFOUND)) {
       (new EditorPatternButton(this)).actionPerformed(null);
     } else {
       Element x = pane.getLineAtPoint(me);
