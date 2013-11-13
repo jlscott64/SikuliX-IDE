@@ -5,18 +5,17 @@ import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
 import org.sikuli.basics.Debug;
 
 public class SikuliIDEPopUpMenu extends JPopupMenu {
 
   private static String me = "SikuliIDEPopUpMenu";
   private static int lvl = 3;
-  
   private int entryCount;
-  private String popType; 
-  
+  private String popType;
+  private JMenuItem menuItem;
   private boolean isValidMenu = true;
+
   /**
    * Get the value of isValidMenu
    *
@@ -29,34 +28,34 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
   }
-  
+
   public SikuliIDEPopUpMenu(String pType, int count) {
     entryCount = count;
     popType = pType;
-    init(); 
+    init();
   }
-  
+
   private void init() {
     if (popType.equals("POP_TAB")) {
-      makeMenuPopTab();
+      popTabMenu();
     } else if (popType.equals("POP_IMAGE")) {
-      makeMenuPopImage();
+      PopImageMenu();
     } else {
       isValidMenu = false;
     }
+    if (!isValidMenu) {
+      return;
+    }
+
   }
 
-  private JMenuItem createMenuItem(JMenuItem item, KeyStroke shortcut, ActionListener listener) {
-    if (shortcut != null) {
-      item.setAccelerator(shortcut);
-    }
+  private JMenuItem createMenuItem(JMenuItem item, ActionListener listener) {
     item.addActionListener(listener);
     return item;
   }
 
-  private JMenuItem createMenuItem(String name, KeyStroke shortcut, ActionListener listener) {
-    JMenuItem item = new JMenuItem(name);
-    return createMenuItem(item, shortcut, listener);
+  private JMenuItem createMenuItem(String name, ActionListener listener) {
+    return createMenuItem(new JMenuItem(name), listener);
   }
 
   class MenuAction implements ActionListener {
@@ -74,7 +73,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
         actMethod = this.getClass().getMethod(item, paramsWithEvent);
         action = item;
       } catch (ClassNotFoundException cnfe) {
-        log(-1,"Can't find menu action: %s\n" + cnfe, item);
+        log(-1, "Can't find menu action: %s\n" + cnfe, item);
       }
     }
 
@@ -87,18 +86,38 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
           params[0] = e;
           actMethod.invoke(this, params);
         } catch (Exception ex) {
-    			log(-1,"Problem when trying to invoke menu action %s\nError: %s", 
+          log(-1, "Problem when trying to invoke menu action %s\nError: %s",
                   action, ex.getMessage());
         }
       }
     }
   }
 
-  private void makeMenuPopTab() {
-    
+  private void popTabMenu() {
+    try {
+      menuItem = createMenuItem("Move Tab", new PopTabAction("MOVE_TAB"));
+    } catch (NoSuchMethodException ex) {
+      isValidMenu = false;
+    }
   }
 
-  private void makeMenuPopImage() {
-    
+  class PopTabAction extends MenuAction {
+
+    static final String MOVE_TAB = "doMoveTab";
+
+    public PopTabAction() {
+      super();
+    }
+
+    public PopTabAction(String item) throws NoSuchMethodException {
+      super(item);
+    }
+
+    public void doMoveTab(ActionEvent ae) {
+      log(lvl, "doMoveTab:");
+    }
+  }
+
+  private void PopImageMenu() {
   }
 }
