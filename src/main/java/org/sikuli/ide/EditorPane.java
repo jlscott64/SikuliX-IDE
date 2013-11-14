@@ -330,6 +330,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
         if (saveFile() == null) {
           return false;
         }
+      } else {
+        SikuliIDE.getInstance().getTabPane().resetLastClosed();
       }
       if (_srcBundleTemp) {
         FileManager.deleteTempDir(_srcBundlePath);

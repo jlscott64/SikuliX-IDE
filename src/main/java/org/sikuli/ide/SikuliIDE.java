@@ -741,9 +741,10 @@ public class SikuliIDE extends JFrame {
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, scMask),
             new FileAction(FileAction.NEW)));
 
-    _fileMenu.add(createMenuItem(_I("menuFileOpen"),
+    jmi = _fileMenu.add(createMenuItem(_I("menuFileOpen"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, scMask),
             new FileAction(FileAction.OPEN)));
+    jmi.setName("OPEN");
     
     if (Settings.isMac() && !Settings.handlesMacBundles) {
     _fileMenu.add(createMenuItem("Open folder.sikuli ...",
@@ -800,13 +801,15 @@ public class SikuliIDE extends JFrame {
               null, new FileAction(FileAction.QUIT)));
     }
   }
+  public FileAction getFileAction(int tabIndex) {
+    return new FileAction(tabIndex);
+  }
   
-  
-
   class FileAction extends MenuAction {
 
     static final String ABOUT = "doAbout";
     static final String NEW = "doNew";
+    static final String INSERT = "doInsert";
     static final String OPEN = "doLoad";
     static final String OPEN_FOLDER = "doLoadFolder";
     static final String SAVE = "doSave";
@@ -817,9 +820,16 @@ public class SikuliIDE extends JFrame {
     static final String CLOSE_TAB = "doCloseTab";
     static final String PREFERENCES = "doPreferences";
     static final String QUIT = "doQuit";
+    
+    private int targetTab = -1;
 
     public FileAction() {
       super();
+    }
+    
+    public FileAction(int tabIndex) {
+      super();
+      targetTab = tabIndex;
     }
 
     public FileAction(String item) throws NoSuchMethodException {
@@ -854,19 +864,31 @@ public class SikuliIDE extends JFrame {
     }
 
     public void doNew(ActionEvent ae) {
+      doNew(ae, -1);
+    }
+    
+    public void doNew(ActionEvent ae, int tabIndex) {
       EditorPane codePane = new EditorPane();
       JScrollPane scrPane = new JScrollPane(codePane);
       lineNumberColumn = new EditorLineNumberView(codePane);
       scrPane.setRowHeaderView(lineNumberColumn);
       if (ae == null) {
-        _mainPane.addTab(_I("tabUntitled"), scrPane);
-        _mainPane.setSelectedIndex(_mainPane.getTabCount() - 1);
+        if (tabIndex < 0 || tabIndex >= _mainPane.getTabCount()) {
+          _mainPane.addTab(_I("tabUntitled"), scrPane);
+        } else {
+          _mainPane.addTab(_I("tabUntitled"), scrPane, tabIndex);
+        }
+        _mainPane.setSelectedIndex(tabIndex < 0 ? _mainPane.getTabCount() - 1 : tabIndex);
       } else {
         _mainPane.addTab(_I("tabUntitled"), scrPane, 0);
         _mainPane.setSelectedIndex(0);
       }
       codePane.getSrcBundle();
       codePane.requestFocus();
+    }
+    
+    public void doInsert(ActionEvent ae) {
+      doLoad(null);
     }
 
     public void doLoad(ActionEvent ae) {
@@ -876,16 +898,27 @@ public class SikuliIDE extends JFrame {
         ACCESSING_AS_FOLDER = false;
       }
       alreadyOpenedTab = _mainPane.getSelectedIndex();
-      String fname = null;
+      String fname = _mainPane.getLastClosed();
       try {
-        doNew(null);
+        doNew(null, targetTab);
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-        codePane.isSourceBundleTemp();
-        fname = codePane.loadFile(accessingAsFile);
+        if (ae != null || fname == null) {
+          codePane.isSourceBundleTemp();
+          fname = codePane.loadFile(accessingAsFile);
+        } else {
+          codePane.loadFile(fname);
+          if (codePane.hasEditingFile()) {
+            setCurrentFileTabTitle(fname);
+          } else {
+            fname = null;
+          }
+        }
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
         } else {
-          doCloseTab(null);
+           if (ae != null) {
+             doCloseTab(null);
+           }
           _mainPane.setSelectedIndex(alreadyOpenedTab);
         }
       } catch (IOException eio) {
@@ -906,7 +939,9 @@ public class SikuliIDE extends JFrame {
         EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
         fname = codePane.saveFile();
         if (fname != null) {
+          fname = codePane.getSrcBundle();
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
+          _mainPane.setLastClosed(fname);
         }
       } catch (IOException eio) {
     			log(-1,"Problem when trying to save %s\nError: %s", 
@@ -2128,6 +2163,7 @@ public class SikuliIDE extends JFrame {
                 try {
                   JScrollPane scrPane = (JScrollPane) _mainPane.getComponentAt(i);
                   codePane = (EditorPane) scrPane.getViewport().getView();
+                  _mainPane.setLastClosed(codePane.getSrcBundle());
                   Debug.log(4, "close tab " + i + " n:" + _mainPane.getComponentCount());
                   boolean ret = codePane.close();
                   Debug.log(4, "after close tab n:" + _mainPane.getComponentCount());

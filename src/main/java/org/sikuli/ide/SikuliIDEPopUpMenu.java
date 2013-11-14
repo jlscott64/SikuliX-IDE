@@ -87,6 +87,11 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     }
   }
 
+  private void fireInsertTabAndLoad(int tabIndex) {
+    SikuliIDE.FileAction insertNewTab = SikuliIDE.getInstance().getFileAction(tabIndex);
+    insertNewTab.doInsert(null);
+  }
+  
   private JMenuItem createMenuItem(JMenuItem item, ActionListener listener) {
     item.addActionListener(listener);
     return item;
@@ -184,13 +189,17 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       log(lvl, "doMoveTab: entered");
       if (getMenuText(0).contains("Insert")) {
         log(lvl, "doMoveTab: insert");
+        doLoad(refTab.getSelectedIndex()+1);
         setMenuText(0, "Move Tab"); 
+        setMenuText(3, "Open left"); 
         return;
       }
+      refTab.resetLastClosed();
       boolean success = refTab.fireCloseTab(mouseTrigger, refTab.getSelectedIndex());
       log(lvl, "doMoveTab: success = %s", success);
-      if (success) {
+      if (success && refTab.getLastClosed() != null) {
         setMenuText(0, "Insert Tab");
+        setMenuText(3, "Insert Left");
       }
     }
 
@@ -198,16 +207,33 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       log(lvl, "doDuplicate: entered");
       fireIDEFileMenu("SAVE");
       fireIDEFileMenu("SAVE_AS");
+      setMenuText(3, "Insert left"); 
+      doOpenLeft(null);
     }
 
+    private boolean doLoad(int tabIndex) {
+      boolean success = true;
+      fireInsertTabAndLoad(tabIndex);
+      return success;
+    }
+    
     public void doOpen(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doOpen: entered");
-      
+      refTab.resetLastClosed();
+      doLoad(refTab.getSelectedIndex()+1);
     }
     
     public void doOpenLeft(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doOpenLeft: entered");
-      
+      if (getMenuText(3).contains("Insert")) {
+        log(lvl, "doMoveTab: insert left");
+        doLoad(refTab.getSelectedIndex());
+        setMenuText(0, "Move Tab"); 
+        setMenuText(3, "Open left"); 
+        return;
+      }
+      refTab.resetLastClosed();
+      doLoad(refTab.getSelectedIndex());
     }
     
     public void doSave(ActionEvent ae) throws NoSuchMethodException {
