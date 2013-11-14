@@ -2,12 +2,12 @@ package org.sikuli.ide;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.sikuli.basics.Debug;
-import org.sikuli.ide.SikuliIDE.FileAction;
 
 public class SikuliIDEPopUpMenu extends JPopupMenu {
 
@@ -18,9 +18,10 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
   public static final String POP_TAB = "POP_TAB";
   private CloseableTabbedPane refTab;
-  private EditorRegionLabel refRegionLabel = null;
-  private EditorPatternLabel refPatternLabel = null;
+  private EditorPane refEditorPane = null;
   public static final String POP_IMAGE = "POP_IMAGE";
+  
+  private MouseEvent mouseTrigger;
 
   /**
    * Get the value of isValidMenu
@@ -45,18 +46,19 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       refTab = (CloseableTabbedPane) ref;
       popTabMenu();
     } else if (popType.equals(POP_IMAGE)) {
-      if (((EditorRegionLabel) ref).isRegionLabel()) {
-        refRegionLabel = (EditorRegionLabel) ref;
-      } else {
-        refPatternLabel = (EditorPatternLabel) ref;
-      }
-      PopImageMenu();
+      refEditorPane = (EditorPane) ref;
+      popImageMenu();
     } else {
       validMenu = false;
     }
     if (!validMenu) {
       return;
     }
+  }
+  
+  public void doShow(CloseableTabbedPane comp, MouseEvent me) {
+    mouseTrigger = me;
+    show(comp, me.getX(), me.getY());
   }
 
   private void fireIDEFileMenu(String name) throws NoSuchMethodException {
@@ -92,6 +94,18 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
   private JMenuItem createMenuItem(String name, ActionListener listener) {
     return createMenuItem(new JMenuItem(name), listener);
+  }
+  
+  private void setMenuText(int index, String text) {
+    ((JMenuItem) getComponent(index)).setText(text);
+  }
+
+  private String getMenuText(int index) {
+    return ((JMenuItem) getComponent(index)).getText();
+  }
+
+  private void setMenuEnabled(int index, boolean enabled) {
+    ((JMenuItem) getComponent(index)).setEnabled(enabled);
   }
 
   class MenuAction implements ActionListener {
@@ -133,13 +147,15 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     try {
       add(createMenuItem("Move Tab", new PopTabAction(PopTabAction.MOVE_TAB)));
       add(createMenuItem("Duplicate", new PopTabAction(PopTabAction.DUPLICATE)));
+      add(createMenuItem("Open", new PopTabAction(PopTabAction.OPEN)));
+      add(createMenuItem("Open left", new PopTabAction(PopTabAction.OPENL)));
       addSeparator();
       add(createMenuItem("Save", new PopTabAction(PopTabAction.SAVE)));
       add(createMenuItem("SaveAs", new PopTabAction(PopTabAction.SAVE_AS)));
       addSeparator();
       add(createMenuItem("Run", new PopTabAction(PopTabAction.RUN)));
       add(createMenuItem("Run Slowly", new PopTabAction(PopTabAction.RUN_SLOW)));
-
+      
     } catch (NoSuchMethodException ex) {
       validMenu = false;
     }
@@ -149,6 +165,8 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
     static final String MOVE_TAB = "doMoveTab";
     static final String DUPLICATE = "doDuplicate";
+    static final String OPEN = "doOpen";
+    static final String OPENL = "doOpenLeft";
     static final String SAVE = "doSave";
     static final String SAVE_AS = "doSaveAs";
     static final String RUN = "doRun";
@@ -164,8 +182,16 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
     public void doMoveTab(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doMoveTab: entered");
-      fireIDEFileMenu("SAVE");
-      fireIDEFileMenu("CLOSE_TAB");
+      if (getMenuText(0).contains("Insert")) {
+        log(lvl, "doMoveTab: insert");
+        setMenuText(0, "Move Tab"); 
+        return;
+      }
+      boolean success = refTab.fireCloseTab(mouseTrigger, refTab.getSelectedIndex());
+      log(lvl, "doMoveTab: success = %s", success);
+      if (success) {
+        setMenuText(0, "Insert Tab");
+      }
     }
 
     public void doDuplicate(ActionEvent ae) throws NoSuchMethodException {
@@ -174,6 +200,16 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       fireIDEFileMenu("SAVE_AS");
     }
 
+    public void doOpen(ActionEvent ae) throws NoSuchMethodException {
+      log(lvl, "doOpen: entered");
+      
+    }
+    
+    public void doOpenLeft(ActionEvent ae) throws NoSuchMethodException {
+      log(lvl, "doOpenLeft: entered");
+      
+    }
+    
     public void doSave(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doSave: entered");
       fireIDEFileMenu("SAVE");
@@ -195,7 +231,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     }
   }
 
-  private void PopImageMenu() {
+  private void popImageMenu() {
     try {
       add(createMenuItem("Preview", new PopImageAction(PopImageAction.PREVIEW)));
     } catch (NoSuchMethodException ex) {

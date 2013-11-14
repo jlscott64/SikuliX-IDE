@@ -120,10 +120,6 @@ public class EditorPatternLabel extends EditorRegionLabel {
       setText(lblText);
       setLabelPyText();
     }
-    popMenu = new SikuliIDEPopUpMenu(SikuliIDEPopUpMenu.POP_IMAGE, this);
-    if (!popMenu.isValidMenu()) {
-      popMenu = null;
-    }
   }
 
   @Override
@@ -291,6 +287,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
   private void checkPopup(MouseEvent me) {
     if (me.isPopupTrigger()) {
       wasPopup = true;
+      popMenu = pane.getPopMenuImage();
       if (popMenu != null) {
         if (imgpop != null && imgpop.isShowing()) {
           showPopup(false);

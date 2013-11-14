@@ -59,6 +59,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   //TODO what is it for???
   private int _caret_last_x = -1;
   private boolean _can_update_caret_last_x = true;
+  private SikuliIDEPopUpMenu popMenuImage;
 
   //<editor-fold defaultstate="collapsed" desc="Initialization">
   public EditorPane() {
@@ -97,6 +98,14 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   private void initEditorPane() {
     addKeyListener(this);
     addCaretListener(this);
+    popMenuImage = new SikuliIDEPopUpMenu("POP_IMAGE", this);
+    if (!popMenuImage.isValidMenu()) {
+      popMenuImage = null;
+    }
+  }
+  
+  public SikuliIDEPopUpMenu getPopMenuImage() {
+    return popMenuImage;
   }
 
   private void updateDocumentListeners() {

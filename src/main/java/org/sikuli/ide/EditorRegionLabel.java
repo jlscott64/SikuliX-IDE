@@ -62,10 +62,6 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
     setCursor(new Cursor(Cursor.HAND_CURSOR));
     addMouseListener(this);
     setText(pyText.replaceAll("Region", "").replaceAll("\\(", "").replaceAll("\\)", ""));
-    popMenu = new SikuliIDEPopUpMenu(SikuliIDEPopUpMenu.POP_IMAGE, this);
-    if (!popMenu.isValidMenu()) {
-      popMenu = null;
-    }
   }
   
   public boolean isRegionLabel() {
@@ -119,8 +115,9 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
 
   private void checkPopup(MouseEvent me) {
     if (me.isPopupTrigger()) {
-      wasPopup = true;
+      popMenu = editor.getPopMenuImage();
       if (popMenu != null) {
+        wasPopup = true;
         popMenu.show(this, me.getX(), me.getY());
       }
       return;
