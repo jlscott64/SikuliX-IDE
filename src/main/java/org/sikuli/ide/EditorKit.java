@@ -10,7 +10,6 @@ import org.sikuli.basics.PreferencesUser;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Arrays;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;

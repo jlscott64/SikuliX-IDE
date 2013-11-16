@@ -38,12 +38,13 @@ public class EditorLineNumberView extends JComponent implements MouseListener {
   private boolean structureChanged = true;
   private Set<Integer> errLines = new HashSet<Integer>();
   private int line;
+  private SikuliIDEPopUpMenu popMenuLineNumber = null;
+  private boolean wasPopup = false;
 
   public EditorLineNumberView(JTextComponent text) {
     /**
-     * Construct a LineNumberView and attach it to the given text component. The
-     * LineNumberView will listen for certain kinds of events from the text
-     * component and update itself accordingly.
+     * Construct a LineNumberView and attach it to the given text component. The LineNumberView will
+     * listen for certain kinds of events from the text component and update itself accordingly.
      */
     if (text == null) {
       throw new IllegalArgumentException("Text component required! Cannot be null!");
@@ -64,6 +65,11 @@ public class EditorLineNumberView extends JComponent implements MouseListener {
 
   private void init() {
     addMouseListener(this);
+    setToolTipText("RightClick for options - left to select the line");
+    popMenuLineNumber = new SikuliIDEPopUpMenu("POP_LINE", this);
+    if (!popMenuLineNumber.isValidMenu()) {
+      popMenuLineNumber = null;
+    }
   }
 
   @Override
@@ -199,7 +205,8 @@ public class EditorLineNumberView extends JComponent implements MouseListener {
         r = text.modelToView(l.getEndOffset() - 1);
       }
       h = (r.y - lastPos) + r.height;
-    } catch (BadLocationException ble) {}
+    } catch (BadLocationException ble) {
+    }
     return h;
   }
 
@@ -224,21 +231,37 @@ public class EditorLineNumberView extends JComponent implements MouseListener {
 
   @Override
   public void mouseClicked(MouseEvent me) {
-//TODO catch RIGHT CLICK
-    if (me.getClickCount() == 1) {
-      ((EditorPane) text).jumpTo(sizes.getIndex(me.getY())+1);
-    } else if (me.getClickCount() == 2) {
+    if (wasPopup) {
+      wasPopup = false;
+      return;
+    }
+    ((EditorPane) text).jumpTo(sizes.getIndex(me.getY()) + 1);
+    if (me.getClickCount() == 2) {
       ((EditorPane) text).getDocument();
     }
   }
 
   @Override
-  public void mousePressed(MouseEvent me) { }
+  public void mousePressed(MouseEvent me) {
+    checkPopup(me);
+  }
 
   @Override
-  public void mouseReleased(MouseEvent me) { }
-  //</editor-fold>
+  public void mouseReleased(MouseEvent me) {
+    checkPopup(me);
+  }
 
+  private void checkPopup(MouseEvent me) {
+    if (me.isPopupTrigger()) {
+      if (popMenuLineNumber != null) {
+        wasPopup = true;
+        popMenuLineNumber.show(this, me.getX(), me.getY());
+      }
+      return;
+    }
+  }
+
+  //</editor-fold>
   //<editor-fold defaultstate="collapsed" desc="UpdateHandler">
   private void viewChanged(int startLine, boolean structureChanged) {
     // Schedule a repaint because one or more line heights may have changed.
@@ -299,6 +322,5 @@ public class EditorLineNumberView extends JComponent implements MouseListener {
       viewChanged(line, ec != null);
     }
   }
-
   //</editor-fold>
 }

@@ -18,8 +18,10 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
   public static final String POP_TAB = "POP_TAB";
   private CloseableTabbedPane refTab;
-  private EditorPane refEditorPane = null;
   public static final String POP_IMAGE = "POP_IMAGE";
+  private EditorPane refEditorPane = null;
+  public static final String POP_LINE = "POP_LINE";
+  private EditorLineNumberView refLineNumberView = null;
   
   private MouseEvent mouseTrigger;
 
@@ -48,6 +50,9 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     } else if (popType.equals(POP_IMAGE)) {
       refEditorPane = (EditorPane) ref;
       popImageMenu();
+    } else if (popType.equals(POP_LINE)) {
+      refLineNumberView = (EditorLineNumberView) ref;
+      popLineMenu();
     } else {
       validMenu = false;
     }
@@ -279,6 +284,31 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
     public void doPreview(ActionEvent ae) {
       log(lvl, "doPreview:");
+    }
+  }
+
+  private void popLineMenu() {
+    try {
+      add(createMenuItem("Action", new PopLineAction(PopLineAction.ACTION)));
+    } catch (NoSuchMethodException ex) {
+      validMenu = false;
+    }
+  }
+
+  class PopLineAction extends MenuAction {
+
+    static final String ACTION = "doAction";
+
+    public PopLineAction() {
+      super();
+    }
+
+    public PopLineAction(String item) throws NoSuchMethodException {
+      super(item);
+    }
+
+    public void doAction(ActionEvent ae) {
+      log(lvl, "doAction:");
     }
   }
 }
