@@ -26,7 +26,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import org.sikuli.basics.Settings;
 import org.sikuli.jython.PythonIndentation;
-import org.sikuli.ide.util.Utils;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.IResourceLoader;
@@ -303,7 +302,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       srcName = srcName.substring(0, srcName.lastIndexOf('.'));
     }
     writeFile(getSrcBundle() + srcName + ".py");
-    Utils.zip(getSrcBundle(), zipPath);
+    FileManager.zip(getSrcBundle(), zipPath);
     Debug.log(2, "export to executable file: " + zipPath);
     return zipPath;
   }

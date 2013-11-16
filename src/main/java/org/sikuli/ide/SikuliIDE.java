@@ -25,8 +25,6 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXSearchField;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
-import org.sikuli.ide.extmanager.ExtensionManagerFrame;
-import org.sikuli.ide.util.Utils;
 import org.sikuli.basics.CommandArgs;
 import org.sikuli.script.EventObserver;
 import org.sikuli.script.EventSubject;
@@ -50,6 +48,7 @@ import org.sikuli.basics.MultiFrame;
 import org.sikuli.basics.RunSetup;
 import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.SikuliX;
+import org.sikuli.script.Key;
 
 public class SikuliIDE extends JFrame {
   
@@ -565,7 +564,7 @@ public class SikuliIDE extends JFrame {
         EditorPane codePane = (EditorPane) scrPane.getViewport().getView();
         file = codePane.getCurrentFile(false);
         if (file != null) {
-          filePath = Utils.slashify(file.getAbsolutePath(), false);
+          filePath = FileManager.slashify(file.getAbsolutePath(), false);
           filePath = filePath.substring(0, filePath.lastIndexOf("/"));
           filenames.add(filePath);
         } else {
@@ -1815,7 +1814,7 @@ public class SikuliIDE extends JFrame {
       if (file == null) {
         return;
       }
-      String path = Utils.slashify(file.getAbsolutePath(), false);
+      String path = FileManager.slashify(file.getAbsolutePath(), false);
       Debug.info("load image: " + path);
       EditorPatternButton icon;
       String img = codePane.copyFileToBundle(path).getAbsolutePath();
@@ -1984,7 +1983,7 @@ public class SikuliIDE extends JFrame {
 
     private void initTooltip() {
       PreferencesUser pref = PreferencesUser.getInstance();
-      String strHotkey = Utils.convertKeyToText(
+      String strHotkey = Key.convertKeyToText(
               pref.getStopHotkey(), pref.getStopHotkeyModifiers());
       String stopHint = _I("btnRunStopHint", strHotkey);
       setToolTipText(_I("btnRun", stopHint));
@@ -2033,75 +2032,7 @@ public class SikuliIDE extends JFrame {
     return pane.getSrcBundle();
   }
 
-  //<editor-fold defaultstate="collapsed" desc="ButtonRecord --- RaiMan not used">
-  class ButtonRecord extends JToggleButton implements ActionListener {
-
-    public ButtonRecord() {
-      super();
-      URL imageURL = SikuliIDE.class.getResource("/icons/record.png");
-      setIcon(new ImageIcon(imageURL));
-      setMaximumSize(new Dimension(26, 26));
-      setBorderPainted(false);
-      setToolTipText("Record");
-      addActionListener(this);
-    }
-
-    private void initSikuliGenerator() {
-    }
-
-    public void startSikuliGenerator() {
-      try {
-        String args[] = {"/tmp/sikuli-video.mov", "/tmp/sikuli-event.log"};
-
-        //FIXME: test if this works..
-        Class c = Class.forName("SikuliGenerator");
-        Class[] t_params = {
-          String[].class, EditorPane.class
-        };
-        Constructor constr = c.getConstructor(t_params);
-        constr.newInstance(new Object[]{
-                  args, getCurrentCodePane()
-                });
-
-        //				 SikuliGenerator sg = new SikuliGenerator(args,
-        //				 getCurrentCodePane());
-      } catch (Exception e) {
-        Debug.error("Error in starting up SikuliGenerator...");
-      }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-      if (getModel().isSelected()) {
-        Debug.info("start recording");
-        Thread recordThread = new Thread() {
-          @Override
-          public void run() {
-            Utils.runRecorder();
-            Debug.info("recording completed");
-            getModel().setSelected(false);
-            startSikuliGenerator();
-          }
-        };
-        recordThread.start();
-      } else {
-        Debug.info("stop recording...");
-        Utils.stopRecorder();
-      }
-    }
-  }
-  //</editor-fold>
-
   private JComponent createSearchField() {
-    /*
-     * if(Utils.isMacOSX()){
-     * _searchField = new JTextField();
-     * _searchField.putClientProperty("JTextField.variant", "search");
-     * }
-     * else{
-     * _searchField = new JXSearchField();
-     * }
-     */
     _searchField = new JXSearchField("Find");
     _searchField.setUseNativeSearchFieldIfPossible(true);
     //_searchField.setLayoutStyle(JXSearchField.LayoutStyle.MAC);

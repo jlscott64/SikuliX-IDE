@@ -13,13 +13,14 @@ import java.io.File;
 import java.net.*;
 import javax.swing.*;
 import javax.swing.text.*;
-import org.sikuli.ide.util.Utils;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 import org.sikuli.script.EventObserver;
 import org.sikuli.script.EventSubject;
 import org.sikuli.script.OverlayCapturePrompt;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Settings;
+import org.sikuli.script.Key;
 
 class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable, EventObserver {
 
@@ -35,7 +36,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     URL imageURL = SikuliIDE.class.getResource("/icons/camera-icon.png");
     setIcon(new ImageIcon(imageURL));
     PreferencesUser pref = PreferencesUser.getInstance();
-    String strHotkey = Utils.convertKeyToText(
+    String strHotkey = Key.convertKeyToText(
             pref.getCaptureHotkey(), pref.getCaptureHotkeyModifiers());
     setToolTipText(SikuliIDE._I("btnCaptureHint", strHotkey));
     setText(SikuliIDE._I("btnCaptureLabel"));
@@ -144,9 +145,9 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
         }
 
         if (filename != null) {
-          String fullpath = Utils.saveImage(simg.getImage(), filename, pane.getSrcBundle());
+          String fullpath = FileManager.saveImage(simg.getImage(), filename, pane.getSrcBundle());
           if (fullpath != null) {
-            captureCompleted(Utils.slashify(fullpath, false), cp);
+            captureCompleted(FileManager.slashify(fullpath, false), cp);
             return;
           }
         }

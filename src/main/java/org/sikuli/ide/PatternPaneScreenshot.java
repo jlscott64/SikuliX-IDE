@@ -18,7 +18,7 @@ import org.sikuli.script.Pattern;
 import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.ScreenUnion;
-import org.sikuli.ide.util.LoadingSpinner;
+import org.sikuli.basics.LoadingSpinner;
 import org.sikuli.basics.Debug;
 
 class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentListener {

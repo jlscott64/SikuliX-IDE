@@ -35,9 +35,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.Element;
 import org.jdesktop.layout.*;
-import org.sikuli.ide.util.Utils;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
+import org.sikuli.script.Key;
 
 /*
  * Created by JFormDesigner on Mon Nov 16 10:13:52 EST 2009
@@ -635,7 +635,7 @@ public class PreferencesWin extends JFrame {
   private void setTxtHotkey(int code, int mod) {
     cap_hkey = code;
     cap_mod = mod;
-    _txtHotkey.setText(Utils.convertKeyToText(code, mod));
+    _txtHotkey.setText(Key.convertKeyToText(code, mod));
   }
 
   private void txtHotkeyFocusGained(FocusEvent e) {

@@ -4,7 +4,7 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.ide.extmanager;
+package org.sikuli.ide;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
