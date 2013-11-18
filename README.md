@@ -21,24 +21,12 @@ It depends on [Sikuli API](https://github.com/RaiMan/SikuliX-API), [Sikuli Jytho
   - bug fixes and some enhancements
 <br />
 <br />
- - **2013 August:** open a developement branch for Sikuli IDE 1.1
-  - better support for images and usage of Sikuli features
-  - implement more standard IDE features
-  - support JRuby as scripting language
-<br />
-<br />
- - **2013 November 29:** release of Sikuli IDE 1.1
-  - open a developement branch for Sikuli IDE 1.2
-  - more scripting languages
+ - **2014 January 31:** release of Sikuli IDE 1.1
   - new features tbd.
-<br />
-<br />
- - **2014:** new versions in May and November
+  - Beta versions available starting end November 2013
 
 **History**
  - this is based on the developement at MIT (Tsung-Hsiang Chang (Sean aka vgod) and Tom Yeh) which was discontinued end 2011 (https://github.com/sikuli/sikuli) with a latest version called Sikuli X-1.0r930.
- - and the [follow up repo](https://github.com/RaiMan/Sikuli12.11), where I prepared the creation of a final version 1.0
- - in April 2013 I decided, to divide Sikuli into the 2 packages Sikuli IDE and [Sikuli API](https://github.com/RaiMan/SikuliX-API), to better support future contributions.
 
 **Support**
  - until otherwise noted: [questions, requests and bugs can still be posted here](https://answers.launchpad.net/sikuli)
