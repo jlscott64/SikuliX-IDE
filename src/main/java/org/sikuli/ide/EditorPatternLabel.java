@@ -151,7 +151,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
   public void showPopup(boolean show) {
     if (show) {
       if (imgpop == null) {
-        BufferedImage img = image.getImage();
+        BufferedImage img = image.get();
         if (img == null) {
           Debug.error("EditorPatternLabel: mouseEntered: not found " + this.imgName);
           return;
