@@ -264,8 +264,7 @@ public class SikuliIDE extends JFrame {
   }
 
   //<editor-fold defaultstate="collapsed" desc="IDE setup and general">
-  //TODO singleton lock
-  protected SikuliIDE(String[] args) {
+  private SikuliIDE(String[] args) {
     super("Sikuli IDE");
     initSikuliIDE(args);
   }
