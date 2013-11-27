@@ -1,6 +1,6 @@
 Sikuli IDE 1.1.0 developement branch
 ===
-**planned release date December 15th** - betas will be available before [(... look here)](https://launchpad.net/sikuli/+download)
+**planned release date 2014 January 31st** - betas will be available before [(... look here)](https://launchpad.net/sikuli/+download)
 <hr />
 <br />
 **Sikuli IDE 1.0.1<br />Service Update per August 12th, 2013**
@@ -21,18 +21,8 @@ This repo is **fully Maven**, so a fork of this repo can be directly used as pro
 It depends on [Sikuli API](https://github.com/RaiMan/SikuliX-API), [Sikuli Jython](https://github.com/RaiMan/SikuliX-Jython) and [Sikuli Basics](https://github.com/RaiMan/SikuliX-Basics).<br />
 [A more detailed info on usage, contents and production of standalone runnable packages](https://github.com/RaiMan/SikuliX-API/wiki/Maven-support)
 <br /><br />
-**Roadmap**
- - **2013 September:** start developement SikuliX 1.1
-<br /><br />
- - **2013 December 15:** release of SikuliX 1.1
-  - new features tbd.
-<br /><br />
- - **2014:** new versions in May and December
-
 **History**
  - this is based on the developement at MIT (Tsung-Hsiang Chang (Sean aka vgod) and Tom Yeh) which was discontinued end 2011 (https://github.com/sikuli/sikuli) with a latest version called Sikuli X-1.0r930.
- - and the [follow up repo](https://github.com/RaiMan/Sikuli12.11), where I prepared the creation of a final version 1.0
- - in April 2013 I decided, to divide Sikuli into the 2 packages Sikuli IDE and [Sikuli API](https://github.com/RaiMan/SikuliX-API), to better support future contributions.
 
 **Support**
  - until otherwise noted: [questions, requests and bugs can still be posted here](https://answers.launchpad.net/sikuli)
